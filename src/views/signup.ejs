@@ -1,0 +1,41 @@
+<%- include('partials/header') %>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card border-0 shadow-lg rounded-3">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-user-plus fa-3x text-success mb-3"></i>
+                            <h2 class="fw-bold">Đăng Ký Tài Khoản</h2>
+                            <p class="text-muted">Tham gia cộng đồng Đăng Khoa Sport</p>
+                        </div>
+                        <form action="/api/users/signup" method="POST">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Họ và Tên"
+                                    required>
+                                <label for="name">Họ và Tên</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="name@example.com" required>
+                                <label for="email">Địa chỉ Email</label>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Mật khẩu" required>
+                                <label for="password">Mật Khẩu</label>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg fw-bold">Đăng Ký</button>
+                            </div>
+                        </form>
+                        <div class="text-center mt-4">
+                            <p class="small text-muted">Đã có tài khoản? <a href="/login"
+                                    class="text-success text-decoration-none">Đăng Nhập</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('partials/footer') %>

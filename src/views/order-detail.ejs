@@ -1,0 +1,111 @@
+<%- include('partials/header') %>
+    <div class="container py-5">
+        <div class="row mb-4">
+            <div class="col">
+                <h2 class="fw-bold">Order Details</h2>
+                <p class="text-muted">Order #<%= order._id %>
+                </p>
+            </div>
+            <div class="col-auto">
+                <% let badgeClass='bg-secondary' ; let statusText=order.status.toUpperCase();
+                    if(order.status==='pending' ) { badgeClass='bg-warning text-dark' ; statusText='CHỜ XỬ LÝ' ; }
+                    if(order.status==='confirmed' ) { badgeClass='bg-primary' ; statusText='ĐÃ XÁC NHẬN' ; }
+                    if(order.status==='shipped' ) { badgeClass='bg-info text-dark' ; statusText='ĐANG GIAO' ; }
+                    if(order.status==='delivered' ) { badgeClass='bg-success' ; statusText='ĐÃ GIAO HÀNG' ; }
+                    if(order.status==='cancelled' ) { badgeClass='bg-danger' ; statusText='ĐÃ HỦY' ; } %>
+                    <span class="badge <%= badgeClass %> fs-6 px-3 py-2">
+                        <%= statusText %>
+                    </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">Sản Phẩm</h5>
+                    </div>
+                    <div class="card-body">
+                        <% order.items.forEach(item=> { %>
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="<%= item.product && item.product.images ? item.product.images[0] : 'https://via.placeholder.com/60' %>"
+                                    alt="<%= item.product ? item.product.name : 'Sản phẩm' %>" class="rounded me-3"
+                                    style="width: 60px; height: 60px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">
+                                        <%= item.product ? item.product.name : 'Sản phẩm không xác định' %>
+                                    </h6>
+                                    <small class="text-muted">Số lượng: <%= item.quantity %></small>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="mb-0">
+                                        <%= formatMoney(item.price * item.quantity) %>
+                                    </h6>
+                                    <small class="text-muted">
+                                        <%= formatMoney(item.price) %> / cái
+                                    </small>
+                                </div>
+                            </div>
+                            <% }); %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">Tóm Tắt</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tạm Tính</span>
+                            <span>
+                                <%= formatMoney(order.totalAmount) %>
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Phí Vận Chuyển</span>
+                            <span>
+                                <%= formatMoney(order.shippingPrice || 0) %>
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Thuế</span>
+                            <span>
+                                <%= formatMoney(order.taxPrice || 0) %>
+                            </span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold fs-5">
+                            <span>Tổng Cộng</span>
+                            <span>
+                                <%= formatMoney(order.totalAmount + (order.shippingPrice || 0) + (order.taxPrice || 0))
+                                    %>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">Thông Tin Giao Hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-1"><strong>
+                                <%= order.shippingAddress.fullName %>
+                            </strong></p>
+                        <p class="mb-1">
+                            <%= order.shippingAddress.phone %>
+                        </p>
+                        <p class="mb-1">
+                            <%= order.shippingAddress.addressLine %>
+                        </p>
+                        <p class="mb-0">
+                            <%= order.shippingAddress.city %>, <%= order.shippingAddress.province %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('partials/footer') %>

@@ -1,0 +1,84 @@
+<%- include('../partials/admin-header') %>
+    <div class="row g-3 my-2">
+        <div class="col-md-4">
+            <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                <div>
+                    <h3 class="fs-2">
+                        <%= stats.products %>
+                    </h3>
+                    <p class="fs-5">Products</p>
+                </div>
+                <i class="fas fa-box-open fs-1 primary-text border rounded-full secondary-bg p-3"></i>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                <div>
+                    <h3 class="fs-2">
+                        <%= stats.orders %>
+                    </h3>
+                    <p class="fs-5">Orders</p>
+                </div>
+                <i class="fas fa-truck fs-1 primary-text border rounded-full secondary-bg p-3"></i>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 bg-white shadow-sm d-flex justify-content-around align-items-center rounded">
+                <div>
+                    <h3 class="fs-2">
+                        <%= stats.users %>
+                    </h3>
+                    <p class="fs-5">Users</p>
+                </div>
+                <i class="fas fa-users fs-1 primary-text border rounded-full secondary-bg p-3"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="row my-5">
+        <h3 class="fs-4 mb-3">Recent Orders</h3>
+        <div class="col">
+            <div class="table-responsive bg-white rounded shadow-sm">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" width="50">#</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% recentOrders.forEach((order, index)=> { %>
+                            <tr>
+                                <th scope="row">
+                                    <%= index + 1 %>
+                                </th>
+                                <td>
+                                    <%= order.user ? order.user.name : 'Unknown' %>
+                                </td>
+                                <td>
+                                    <%= order.createdAt.toLocaleDateString() %>
+                                </td>
+                                <td>$<%= order.totalPrice %>
+                                </td>
+                                <td>
+                                    <% if(order.status==='completed' ) { %>
+                                        <span class="badge bg-success">Completed</span>
+                                        <% } else if(order.status==='pending' ) { %>
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                            <% } else { %>
+                                                <span class="badge bg-secondary">
+                                                    <%= order.status %>
+                                                </span>
+                                                <% } %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <%- include('../partials/admin-footer') %>
