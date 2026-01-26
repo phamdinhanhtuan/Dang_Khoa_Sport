@@ -1,0 +1,229 @@
+<%- include('partials/header') %>
+    <!-- ATTEMPT 4 -->
+    <div class="container-fluid px-lg-5 py-4">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb small text-uppercase mb-0">
+                <li class="breadcrumb-item"><a href="/" class="text-muted text-decoration-none">Trang Chủ</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Sản Phẩm</li>
+            </ol>
+        </nav>
+
+        <% const currentCat=categories.find(c=> c._id.toString() == currentState.category);
+            const pageTitle = currentCat ? currentCat.name.toUpperCase() : 'TẤT CẢ SẢN PHẨM';
+            const pageDesc = currentCat ? currentCat.description : 'Trang bị thể thao chính hãng giúp bạn bứt phá mọi '
+            +
+            'giới hạn. Khám phá bộ sưu tập mới nhất với công nghệ tiên tiến.';
+            %>
+
+            <!-- Title Section -->
+            <div class="mb-5 border-bottom pb-4">
+                <h1 class="display-4 fw-bold text-uppercase mb-3" style="font-weight: 900;">
+                    <%= pageTitle %>
+                </h1>
+                <p class="text-muted" style="max-width: 800px; font-size: 1.1rem;">
+                    <%= pageDesc %>
+                </p>
+            </div>
+
+            <!-- Filter & Sort Toolbar -->
+            <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between border px-3 py-2 mb-4 bg-white sticky-top"
+                style="z-index: 90; top: 80px;">
+
+                <!-- Left: Filters -->
+                <div class="d-flex align-items-center gap-2 flex-wrap mb-3 mb-md-0">
+                    <span class="fw-bold me-2 small text-uppercase"><i class="fas fa-sliders-h me-1"></i> Bộ Lọc</span>
+
+                    <!-- Category Dropdown -->
+                    <div class="dropdown">
+                        <button
+                            class="btn btn-outline-secondary border-0 rounded-0 dropdown-toggle small fw-bold text-uppercase"
+                            type="button" data-bs-toggle="dropdown">
+                            Loại Sản Phẩm
+                        </button>
+                        <ul class="dropdown-menu rounded-0 shadow-sm">
+                            <li><a class="dropdown-item <%= !currentState.category ? 'active bg-light text-dark fw-bold' : '' %>"
+                                    href="/shop">Tất cả</a></li>
+                            <% categories.forEach(cat=> { %>
+                                <li><a class="dropdown-item <%= currentState.category == cat._id ? 'active bg-light text-dark fw-bold' : '' %>"
+                                        href="/shop?category=<%= cat._id %>">
+                                        <%= cat.name %>
+                                    </a></li>
+                                <% }) %>
+                        </ul>
+                    </div>
+
+                    <!-- Price Dropdown -->
+                    <div class="dropdown">
+                        <button
+                            class="btn btn-outline-secondary border-0 rounded-0 dropdown-toggle small fw-bold text-uppercase"
+                            type="button" data-bs-toggle="dropdown">
+                            Giá
+                        </button>
+                        <ul class="dropdown-menu rounded-0 shadow-sm">
+                            <li><a class="dropdown-item" href="/shop">Tất cả</a></li>
+                            <li><a class="dropdown-item" href="/shop?min=0&max=500000">Dưới 500k</a></li>
+                            <li><a class="dropdown-item" href="/shop?min=500000&max=2000000">500k - 2 Triệu</a></li>
+                            <li><a class="dropdown-item" href="/shop?min=2000000">Trên 2 Triệu</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Size Dropdown (Mock) -->
+                    <div class="dropdown d-none d-lg-block">
+                        <button
+                            class="btn btn-outline-secondary border-0 rounded-0 dropdown-toggle small fw-bold text-uppercase"
+                            type="button" disabled>
+                            Kích Cỡ
+                        </button>
+                    </div>
+                    <!-- Color Dropdown (Mock) -->
+                    <div class="dropdown d-none d-lg-block">
+                        <button
+                            class="btn btn-outline-secondary border-0 rounded-0 dropdown-toggle small fw-bold text-uppercase"
+                            type="button" disabled>
+                            Màu Sắc
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Sort & Count -->
+                <div
+                    class="d-flex align-items-center justify-content-between justify-content-md-end gap-3 w-100 w-md-auto">
+                    <span class="text-dark fw-bold small text-uppercase">
+                        <%= products.length %> Sản Phẩm
+                    </span>
+
+                    <div class="dropdown">
+                        <button class="btn btn-white border rounded-0 dropdown-toggle small fw-bold text-uppercase px-3"
+                            type="button" data-bs-toggle="dropdown">
+                            Sắp xếp theo
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end rounded-0 shadow-sm">
+                            <li><a class="dropdown-item" href="#"
+                                    onclick="updateQueryParam('sort', '-createdAt'); return false;">Mới Nhất</a></li>
+                            <li><a class="dropdown-item" href="#"
+                                    onclick="updateQueryParam('sort', 'price'); return false;">Giá: Thấp - Cao</a></li>
+                            <li><a class="dropdown-item" href="#"
+                                    onclick="updateQueryParam('sort', '-price'); return false;">Giá: Cao - Thấp</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Filters (Chips) -->
+            <% if(currentState.category) { %>
+                <div class="mb-4 d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-dark border rounded-0 p-2 mb-2 d-flex align-items-center gap-2">
+                        Loại: <%= currentCat ? currentCat.name : '' %>
+                            <a href="/shop" class="text-muted ms-2"><i class="fas fa-times"></i></a>
+                    </span>
+                    <a href="/shop" class="text-dark small fw-bold text-decoration-underline mb-2 ms-2">XÓA TẤT CẢ</a>
+                </div>
+                <% } %>
+
+                    <!-- Product Grid -->
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3 g-md-4">
+                        <% if (products.length> 0) { %>
+                            <% products.forEach(product=> { %>
+                                <div class="col">
+                                    <div class="product-card h-100" data-url="/product/<%= product._id %>"
+                                        style="cursor: pointer;">
+                                        <div class="product-img-wrapper position-relative">
+                                            <% if(product.stock <=0) { %>
+                                                <span
+                                                    class="badge bg-secondary position-absolute top-0 start-0 m-2 px-2 py-1 small fw-bold"
+                                                    style="z-index: 2;">HẾT HÀNG</span>
+                                                <% } else if(product.price> 2000000) { %>
+
+                                                    <% } else { %>
+                                                        <span
+                                                            class="badge-new bg-danger text-white position-absolute top-0 start-0 m-2 px-2 py-1 small fw-bold"
+                                                            style="z-index: 2;">HOT</span>
+                                                        <% } %>
+
+                                                            <img loading="lazy"
+                                                                src="<%= product.images && product.images.length > 0 ? product.images[0] : '/img/default-product.png' %>"
+                                                                alt="<%= product.name %>"
+                                                                onerror="this.src='/img/default-product.png'">
+
+                                                            <!-- Quick View (Optional) -->
+                                                            <button
+                                                                class="btn btn-light rounded-circle position-absolute top-50 start-50 translate-middle shadow-sm btn-quick-view d-flex align-items-center justify-content-center"
+                                                                style="width: 45px; height: 45px; opacity: 0; transition: all 0.3s ease; z-index: 10;"
+                                                                onclick="event.stopPropagation();"
+                                                                data-id="<%= product._id %>">
+                                                                <i class="fas fa-eye text-dark"></i>
+                                                            </button>
+                                        </div>
+                                        <div class="product-info p-3">
+                                            <div class="product-brand">
+                                                <%= product.brand %>
+                                            </div>
+                                            <h3 class="product-name">
+                                                <%= product.name %>
+                                            </h3>
+                                            <div class="d-flex justify-content-between align-items-end mt-2">
+                                                <div class="product-price">
+                                                    <%= formatMoney(product.price) %>
+                                                </div>
+                                                <!-- <div class="text-warning small"><i class="fas fa-star"></i> 4.5</div> -->
+                                            </div>
+                                            <button class="btn-add-cart" data-id="<%= product._id %>">
+                                                Thêm vào giỏ
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                                    <% } else { %>
+                                        <div class="col-12">
+                                            <div class="text-center py-5">
+                                                <i class="fas fa-search fa-3x text-muted mb-3 opacity-50"></i>
+                                                <h4 class="fw-bold">Không tìm thấy sản phẩm nào</h4>
+                                                <p class="text-muted">Hãy thử thay đổi bộ lọc hoặc tìm kiếm khác.</p>
+                                                <a href="/shop" class="btn btn-dark rounded-0 mt-3 px-4">XEM TẤT CẢ SẢN
+                                                    PHẨM</a>
+                                            </div>
+                                        </div>
+                                        <% } %>
+                    </div>
+
+                    <!-- Pagination -->
+                    <% if (totalPages> 1) { %>
+                        <div class="d-flex justify-content-center mt-5">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <!-- Previous -->
+                                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                                        <a class="page-link rounded-0 text-dark border-0" href="#"
+                                            onclick="<%= currentPage > 1 ? `updateQueryParam('page', ${currentPage - 1})` : 'return false;' %>; return false;"
+                                            aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Page Numbers -->
+                                    <% for(let i=1; i <=totalPages; i++) { %>
+                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                            <a class="page-link rounded-0 border-0 <%= i === currentPage ? 'bg-dark border-dark text-white' : 'text-dark' %>"
+                                                href="#" onclick="updateQueryParam('page', <%= i %>); return false;">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                        <% } %>
+
+                                            <!-- Next -->
+                                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                                <a class="page-link rounded-0 text-dark border-0" href="#"
+                                                    onclick="<%= currentPage < totalPages ? `updateQueryParam('page', ${currentPage + 1})` : 'return false;' %>; return false;"
+                                                    aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <% } %>
+    </div>
+    <%- include('partials/quickview_modal') %>
+        <%- include('partials/footer') %>

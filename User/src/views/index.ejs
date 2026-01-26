@@ -1,0 +1,230 @@
+<%- include('partials/header') %>
+
+    <!-- Hero Section -->
+    <!-- Hero Section -->
+    <!-- Hero Section -->
+    <section class="hero-section position-relative w-100" style="height: 600px; min-height: 500px;">
+        <div class="hero-bg"
+            style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.6)), url('/img/shop-front.png'); background-position: center; background-size: cover; height: 100%; width: 100%;">
+        </div>
+        <div class="position-absolute bottom-0 start-50 translate-middle-x mb-5 pb-5 text-center w-100">
+            <a href="/shop"
+                class="btn btn-light rounded-0 px-5 py-3 fw-bold fs-5 text-uppercase tracking-wider hover-scale">
+                KHÁM PHÁ NGAY
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-4 bg-white border-bottom mb-5">
+        <div class="container">
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <i class="fas fa-shipping-fast fa-2x text-dark"></i>
+                        <div>
+                            <h6 class="fw-bold text-uppercase mb-1">Giao Hàng Toàn Quốc</h6>
+                            <span class="text-muted small">Vận chuyển nhanh 2-4 ngày</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <i class="fas fa-check-circle fa-2x text-dark"></i>
+                        <div>
+                            <h6 class="fw-bold text-uppercase mb-1">Cam Kết Chính Hãng</h6>
+                            <span class="text-muted small">Hoàn tiền 200% nếu giả</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center justify-content-center gap-3">
+                        <i class="fas fa-undo-alt fa-2x text-dark"></i>
+                        <div>
+                            <h6 class="fw-bold text-uppercase mb-1">Đổi Trả Dễ Dàng</h6>
+                            <span class="text-muted small">Trong vòng 30 ngày</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW ARRIVALS CAROUSEL (Mockup) -->
+    <!-- NEW ARRIVALS CAROUSEL (Mockup) -->
+    <section class="container mb-5">
+        <h3 class="fw-bold mb-4 text-center">BỘ SƯU TẬP MỚI</h3>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+            <!-- Item 1 -->
+            <div class="col">
+                <div class="product-card h-100" onclick="window.location.href='/shop?category=badminton'">
+                    <div class="product-img-wrapper">
+                        <span
+                            class="badge-new bg-danger text-white position-absolute top-0 start-0 m-2 px-2 py-1 small fw-bold"
+                            style="z-index: 2;">MỚI</span>
+                        <img src="https://images.unsplash.com/photo-1626224583764-847890e05895?auto=format&fit=crop&w=600&q=80"
+                            alt="Vợt Yonex">
+                    </div>
+                    <div class="p-3">
+                        <div class="text-muted small fw-bold text-uppercase mb-1">YONEX</div>
+                        <h6 class="fw-bold text-dark mb-2">Astrox 100ZZ Kurenai</h6>
+                        <div class="fw-bold">4.100.000 ₫</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Item 2 -->
+            <div class="col">
+                <div class="product-card h-100" onclick="window.location.href='/shop?category=football'">
+                    <div class="product-img-wrapper">
+                        <span
+                            class="badge-new bg-danger text-white position-absolute top-0 start-0 m-2 px-2 py-1 small fw-bold"
+                            style="z-index: 2;">HOT</span>
+                        <img src="https://images.unsplash.com/photo-1511886929837-a978fed018ef?auto=format&fit=crop&w=600&q=80"
+                            alt="Giày Nike">
+                    </div>
+                    <div class="p-3">
+                        <div class="text-muted small fw-bold text-uppercase mb-1">NIKE FOOTBALL</div>
+                        <h6 class="fw-bold text-dark mb-2">Mercurial Superfly 9</h6>
+                        <div class="fw-bold">5.800.000 ₫</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Item 3 -->
+            <div class="col">
+                <div class="product-card h-100" onclick="window.location.href='/shop?category=football'">
+                    <div class="product-img-wrapper">
+                        <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80"
+                            alt="Giày Kamito">
+                    </div>
+                    <div class="p-3">
+                        <div class="text-muted small fw-bold text-uppercase mb-1">KAMITO</div>
+                        <h6 class="fw-bold text-dark mb-2">TA11 - Tuấn Anh</h6>
+                        <div class="fw-bold">650.000 ₫</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Item 4 -->
+            <div class="col">
+                <div class="product-card h-100" onclick="window.location.href='/shop?category=badminton'">
+                    <div class="product-img-wrapper">
+                        <span
+                            class="badge-new bg-danger text-white position-absolute top-0 start-0 m-2 px-2 py-1 small fw-bold"
+                            style="z-index: 2;">GIẢM GIÁ</span>
+                        <img src="https://images.unsplash.com/photo-1626818617830-ec3975487752?auto=format&fit=crop&w=600&q=80"
+                            alt="Cầu Vina Star">
+                    </div>
+                    <div class="p-3">
+                        <div class="text-muted small fw-bold text-uppercase mb-1">PHỤ KIỆN</div>
+                        <h6 class="fw-bold text-dark mb-2">Ống Cầu Vina Star</h6>
+                        <div class="fw-bold">180.000 ₫</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TOO FAST Section -->
+    <section class="container text-center py-5 mb-5">
+        <h2 class="display-1 fw-bold text-uppercase mb-2">TỐC ĐỘ BÙNG NỔ</h2>
+        <p class="fs-4 text-muted mb-4">NIKE MERCURIAL & KAMITO TA11</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/shop?category=football" class="btn btn-dark rounded-0 px-5 py-3 fw-bold">GIÀY BÓNG ĐÁ</a>
+            <a href="/shop?category=football" class="btn btn-outline-dark rounded-0 px-5 py-3 fw-bold">PHỤ KIỆN</a>
+        </div>
+        <div class="mt-5 w-100 position-relative shadow-lg overflow-hidden rounded-3"
+            style="height: 600px; background: #000;">
+            <video autoplay muted loop playsinline class="position-absolute top-0 start-0 w-100 h-100"
+                style="object-fit: cover; opacity: 0.9;">
+                <!-- Generic Sports Video -->
+                <source src="https://videos.pexels.com/video-files/5309381/5309381-uhd_2560_1440_25fps.mp4"
+                    type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="position-absolute bottom-0 start-0 w-100 text-center pb-4"
+                style="background: linear-gradient(transparent, rgba(0,0,0,0.8));">
+                <p class="text-white fw-bold letter-spacing-2 mb-2 text-uppercase"
+                    style="letter-spacing: 2px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Đẳng Cấp Sân Cỏ</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRAINING Section -->
+    <section class="container-fluid px-0 mb-5">
+        <div class="py-5 text-center bg-light">
+            <h2 class="display-3 fw-bold text-uppercase mb-2">RÈN LUYỆN SỨC BỀN</h2>
+            <p class="fs-5 text-secondary mb-4">CHINH PHỤC MỌI GIỚI HẠN</p>
+            <a href="/shop?category=training" class="btn btn-dark rounded-0 px-5 py-3 fw-bold">KHÁM PHÁ NGAY</a>
+            <div class="mt-4 row g-0">
+                <div class="col-md-6 offset-md-3">
+                    <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1000&auto=format&fit=crop"
+                        class="img-fluid w-100 placeholder-img" alt="Training">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Featured Products -->
+    <section class="py-5" id="featured">
+        <div class="container">
+            <div class="section-title">Xu Hướng Hiện Nay</div>
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                <% featuredProducts.forEach(product=> { %>
+                    <div class="col">
+                        <div class="product-card h-100" data-url="/product/<%= product._id %>" style="cursor: pointer;">
+                            <div class="product-img-wrapper">
+                                <span class="badge-new">MỚI</span>
+                                <img loading="lazy"
+                                    src="<%= product.images && product.images.length > 0 ? product.images[0] : '/img/default-product.png' %>"
+                                    alt="<%= product.name %>" onerror="this.src='/img/default-product.png'">
+                            </div>
+                            <div class="product-info p-3">
+                                <div class="product-brand">
+                                    <%= product.brand %>
+                                </div>
+                                <h3 class="product-name">
+                                    <%= product.name %>
+                                </h3>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="product-price">
+                                        <%= formatMoney(product.price) %>
+                                    </div>
+                                    <div class="text-warning small">
+                                        <i class="fas fa-star"></i> 4.8
+                                    </div>
+                                </div>
+                                <button class="btn-add-cart" data-id="<%= product._id %>">
+                                    Thêm vào giỏ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="/shop" class="btn btn-outline-dark px-5 py-2 fw-bold rounded-pill">Xem Tất Cả Sản Phẩm</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="py-5 mt-5" style="background: var(--primary-color); color: white;">
+        <div class="container text-center">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <h2 class="text-white mb-3">Tham Gia Cộng Đồng</h2>
+                    <p class="text-white-50 mb-4">Đăng ký để nhận ưu đãi đặc biệt, quà tặng miễn phí và các khuyến mãi
+                        độc quyền.</p>
+                    <form class="d-flex gap-2 justify-content-center max-w-lg mx-auto" style="max-width: 500px;">
+                        <input type="email" class="form-control rounded-pill px-4" placeholder="Nhập email của bạn">
+                        <button class="btn btn-light rounded-pill px-4 fw-bold">Đăng Ký</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/footer') %>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<% var locale=(typeof locale !=='undefined' ) ? locale : 'en' ; %>
+        <% var user=(typeof user !=='undefined' ) ? user : null; %>
+                <% var cartCount=(typeof cartCount !=='undefined' ) ? cartCount : 0; %>
+                        <% var title=(typeof title !=='undefined' ) ? title : 'Page' ; %>
+                                <html lang="en">
+
+                                <head>
+                                        <meta charset="UTF-8">
+                                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                        <title>
+                                                <%= title %> | Đăng Khoa Sport
+                                        </title>
+                                        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+                                                rel="stylesheet">
+                                        <link rel="stylesheet"
+                                                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                                        <link rel="stylesheet" href="/css/style.css">
+                                        <link rel="stylesheet" href="/css/mega-menu.css">
+                                </head>
+
+                                <body class="d-flex flex-column min-vh-100">
+
+                                        <!-- Top Bar -->
+                                        <div class="bg-light text-center py-2 border-bottom">
+                                                <span class="small fw-bold"
+                                                        style="font-size: 11px; letter-spacing: 0.5px;">MIỄN PHÍ VẬN
+                                                        CHUYỂN
+                                                        TIÊU CHUẨN CHO ĐƠN ĐẶT HÀNG TRÊN 1.200.000 VND</span>
+                                        </div>
+
+                                        <!-- Main Navbar -->
+                                        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top py-3"
+                                                style="background-color: #181818 !important;">
+                                                <div class="container-fluid px-4">
+                                                        <!-- Logo -->
+                                                        <a class="navbar-brand me-5 d-flex align-items-center gap-2"
+                                                                href="/">
+                                                                <img src="/img/logo.png" alt="Đăng Khoa Sport"
+                                                                        style="height: 60px; object-fit: contain;">
+                                                        </a>
+
+                                                        <button class="navbar-toggler" type="button"
+                                                                data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                                                                <span class="navbar-toggler-icon"></span>
+                                                        </button>
+
+                                                        <!-- Nav Items -->
+                                                        <div class="collapse navbar-collapse" id="navbarNav">
+                                                                <ul
+                                                                        class="navbar-nav me-auto mb-2 mb-lg-0 fw-bold header-nav">
+                                                                        <li class="nav-item"><a
+                                                                                        class="nav-link text-white mx-2"
+                                                                                        href="/shop">Hàng Mới</a></li>
+
+                                                                        <!-- Dynamic Categories -->
+                                                                        <% if (typeof menuCategories !=='undefined' &&
+                                                                                menuCategories.length> 0) { %>
+                                                                                <% menuCategories.forEach(category=> {
+                                                                                        %>
+                                                                                        <li
+                                                                                                class="nav-item dropdown position-static">
+                                                                                                <a class="nav-link text-white mx-2 <%= category.children.length > 0 ? 'dropdown-toggle-remove' : '' %>"
+                                                                                                        href="/shop?category=<%= category._id %>">
+                                                                                                        <%= category.name
+                                                                                                                %>
+                                                                                                                <div
+                                                                                                                        class="nav-line">
+                                                                                                                </div>
+                                                                                                </a>
+
+                                                                                                <% if
+                                                                                                        (category.children.length>
+                                                                                                        0) { %>
+                                                                                                        <div
+                                                                                                                class="dropdown-menu w-100 mt-0 rounded-0 border-0 p-4 shadow-lg mega-menu-content">
+                                                                                                                <div
+                                                                                                                        class="container">
+                                                                                                                        <div
+                                                                                                                                class="row">
+                                                                                                                                <%
+                                                                                                                                        category.children.forEach(subCat=>
+                                                                                                                                        {
+                                                                                                                                        %>
+                                                                                                                                        <div
+                                                                                                                                                class="col-md-3 mb-4">
+                                                                                                                                                <h6
+                                                                                                                                                        class="fw-bold mb-3 border-bottom border-dark pb-2">
+                                                                                                                                                        <a href="/shop?category=<%= subCat._id %>"
+                                                                                                                                                                class="text-dark text-decoration-none">
+                                                                                                                                                                <%= subCat.name
+                                                                                                                                                                        %>
+                                                                                                                                                        </a>
+                                                                                                                                                </h6>
+                                                                                                                                                <ul
+                                                                                                                                                        class="list-unstyled small text-muted">
+                                                                                                                                                        <% if (subCat.children
+                                                                                                                                                                &&
+                                                                                                                                                                subCat.children.length>
+                                                                                                                                                                0)
+                                                                                                                                                                {
+                                                                                                                                                                %>
+                                                                                                                                                                <%
+                                                                                                                                                                        subCat.children.forEach(grandChild=>
+                                                                                                                                                                        {
+                                                                                                                                                                        %>
+                                                                                                                                                                        <li
+                                                                                                                                                                                class="mb-2">
+                                                                                                                                                                                <a href="/shop?category=<%= grandChild._id %>"
+                                                                                                                                                                                        class="text-decoration-none text-muted hover-dark">
+                                                                                                                                                                                        <%= grandChild.name
+                                                                                                                                                                                                %>
+                                                                                                                                                                                </a>
+                                                                                                                                                                        </li>
+                                                                                                                                                                        <% })
+                                                                                                                                                                                %>
+                                                                                                                                                                                <% } else
+                                                                                                                                                                                        {
+                                                                                                                                                                                        %>
+                                                                                                                                                                                        <li
+                                                                                                                                                                                                class="mb-2">
+                                                                                                                                                                                                <a href="/shop?category=<%= subCat._id %>"
+                                                                                                                                                                                                        class="text-decoration-none text-muted hover-dark">Xem
+                                                                                                                                                                                                        tất
+                                                                                                                                                                                                        cả</a>
+                                                                                                                                                                                        </li>
+                                                                                                                                                                                        <% }
+                                                                                                                                                                                                %>
+                                                                                                                                                </ul>
+                                                                                                                                        </div>
+                                                                                                                                        <% })
+                                                                                                                                                %>
+                                                                                                                        </div>
+                                                                                                                </div>
+                                                                                                        </div>
+                                                                                                        <% } %>
+                                                                                        </li>
+                                                                                        <% }) %>
+                                                                                                <% } %>
+
+                                                                                                        <li
+                                                                                                                class="nav-item">
+                                                                                                                <a class="nav-link text-white mx-2"
+                                                                                                                        href="/shop">Bộ
+                                                                                                                        Sưu
+                                                                                                                        Tập</a>
+                                                                                                        </li>
+                                                                </ul>
+
+                                                                <div class="d-flex align-items-center">
+                                                                        <form action="/shop" method="GET"
+                                                                                class="d-none d-lg-flex me-4 align-items-center border border-secondary px-2 rounded-1"
+                                                                                style="height: 35px; min-width: 200px;">
+                                                                                <button type="submit"
+                                                                                        class="btn btn-sm text-secondary p-0 border-0 bg-transparent"><i
+                                                                                                class="fas fa-search"></i></button>
+                                                                                <input class="form-control form-control-sm bg-transparent border-0 text-white shadow-none"
+                                                                                        type="search" name="search"
+                                                                                        placeholder="TÌM KIẾM SẢN PHẨM"
+                                                                                        aria-label="Search">
+                                                                        </form>
+
+                                                                        <a href="/cart"
+                                                                                class="text-white me-3 position-relative">
+                                                                                <i
+                                                                                        class="fas fa-shopping-cart fa-lg"></i>
+                                                                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                                                                        style="font-size: 10px;">
+                                                                                        <%= (typeof cartCount
+                                                                                                !=='undefined' &&
+                                                                                                cartCount) ? cartCount :
+                                                                                                0 %>
+                                                                                </span>
+                                                                        </a>
+
+                                                                        <% if (user) { %>
+                                                                                <div class="dropdown">
+                                                                                        <a class="text-white"
+                                                                                                href="/shop"
+                                                                                                role="button"
+                                                                                                data-bs-toggle="dropdown">
+                                                                                                <i
+                                                                                                        class="fas fa-user fa-lg"></i>
+                                                                                        </a>
+                                                                                        <ul
+                                                                                                class="dropdown-menu dropdown-menu-end">
+                                                                                                <li><a class="dropdown-item"
+                                                                                                                href="/wishlist">Danh
+                                                                                                                sách yêu
+                                                                                                                thích</a>
+                                                                                                </li>
+                                                                                                <li><a class="dropdown-item"
+                                                                                                                href="/orders/my">Đơn
+                                                                                                                hàng của
+                                                                                                                tôi</a>
+                                                                                                </li>
+                                                                                                <li><a class="dropdown-item"
+                                                                                                                href="/api/users/logout">Đăng
+                                                                                                                xuất</a>
+                                                                                                </li>
+                                                                                        </ul>
+                                                                                </div>
+                                                                                <% } else { %>
+                                                                                        <a href="/login"
+                                                                                                class="text-white">
+                                                                                                <i
+                                                                                                        class="far fa-user fa-lg"></i>
+                                                                                        </a>
+                                                                                        <% } %>
+
+                                                                                                <% if (user &&
+                                                                                                        user.role==='admin'
+                                                                                                        ) { %>
+                                                                                                        <a href="http://localhost:3001"
+                                                                                                                target="_blank"
+                                                                                                                class="text-warning ms-3 fw-bold text-decoration-none"
+                                                                                                                style="font-size: 0.9rem;">
+                                                                                                                <i
+                                                                                                                        class="fas fa-shield-alt me-1"></i>
+                                                                                                                ADMIN
+                                                                                                        </a>
+                                                                                                        <% } %>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </nav>
+
+                                        <!-- Main Content -->
+                                        <main class="flex-grow-1">

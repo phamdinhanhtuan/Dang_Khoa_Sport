@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+    <div class="container py-5">
+        <h2 class="mb-4 fw-bold">Đơn Hàng Của Tôi</h2>
+
+        <% if (orders.length> 0) { %>
+            <div class="table-responsive">
+                <table class="table table-hover border">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col">Mã Đơn Hàng</th>
+                            <th scope="col">Ngày Đặt</th>
+                            <th scope="col">Tổng Tiền</th>
+                            <th scope="col">Trạng Thái</th>
+                            <th scope="col">Sản Phẩm</th>
+                            <th scope="col">Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order=> { %>
+                            <tr>
+                                <td>#<%= order._id.toString().substring(0, 8) %>...</td>
+                                <td>
+                                    <%= order.createdAt.toLocaleDateString('vi-VN') %>
+                                </td>
+                                <td>
+                                    <%= formatMoney(order.totalAmount) %>
+                                </td>
+                                <td>
+                                    <% if(order.status==='completed' ) { %>
+                                        <span class="badge bg-success">Hoàn thành</span>
+                                        <% } else if(order.status==='pending' ) { %>
+                                            <span class="badge bg-warning text-dark">Chờ xử lý</span>
+                                            <% } else { %>
+                                                <span class="badge bg-secondary">
+                                                    <%= order.status %>
+                                                </span>
+                                                <% } %>
+                                </td>
+                                <td>
+                                    <ul class="list-unstyled mb-0">
+                                        <% order.items.forEach(item=> { %>
+                                            <li>
+                                                <%= item.quantity %>x <%= item.product.name %>
+                                            </li>
+                                            <% }) %>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <a href="/orders/<%= order._id %>" class="btn btn-sm btn-outline-primary">Chi
+                                        tiết</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+            <% } else { %>
+                <div class="alert alert-info">Bạn chưa có đơn hàng nào.</div>
+                <% } %>
+    </div>
+    <%- include('partials/footer') %>

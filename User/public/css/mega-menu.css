@@ -1,0 +1,96 @@
+/* CSS for Mega Menu */
+
+/* Ensure the mega menu content is hidden by default but reachable */
+.nav-item.dropdown .mega-menu-content {
+    display: none;
+    background-color: #f8f9fa;
+    /* Light background for the menu content */
+    border-top: 1px solid #ddd;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 95%;
+    /* Position right below the navbar with slight overlap */
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    margin-top: -1px;
+    /* Overlap slightly with navbar border */
+}
+
+/* Show on hover for desktop */
+@media (min-width: 992px) {
+    .nav-item.dropdown:hover .mega-menu-content {
+        display: block;
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    /* Invisible bridge to prevent menu from closing when moving mouse down */
+    .nav-item.dropdown::after {
+        content: '';
+        position: absolute;
+        height: 20px;
+        width: 100%;
+        bottom: -10px;
+        left: 0;
+        background: transparent;
+        z-index: 900;
+        display: block;
+    }
+}
+
+/* Header nav link styling */
+.header-nav .nav-link {
+    font-size: 0.9rem;
+    position: relative;
+    padding-bottom: 5px;
+    height: 100%;
+    /* Ensure it fills height */
+    display: flex;
+    align-items: center;
+}
+
+/* Increase hit area for nav items to prevent menu closing */
+.header-nav .nav-item {
+    height: 100%;
+}
+
+/* Underline effect on hover */
+.header-nav .nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.header-nav .nav-link:hover::after {
+    width: 100%;
+}
+
+.hover-dark:hover {
+    color: #000 !important;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* Custom search input placeholder color */
+.form-control::placeholder {
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

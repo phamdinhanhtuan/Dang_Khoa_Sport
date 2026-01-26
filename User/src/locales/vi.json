@@ -1,0 +1,24 @@
+{
+    "nav": {
+        "home": "Trang chủ",
+        "shop": "Cửa hàng",
+        "new_arrivals": "Hàng mới về",
+        "contact": "Liên hệ",
+        "login": "Đăng nhập",
+        "logout": "Đăng xuất",
+        "my_orders": "Đơn hàng của tôi",
+        "dashboard": "Bảng điều khiển",
+        "cart": "Giỏ hàng"
+    },
+    "footer": {
+        "premium_desc": "Dụng cụ thể thao cao cấp cho vận động viên chuyên nghiệp và người đam mê. Chúng tôi cam kết cung cấp những thiết bị tốt nhất để giúp bạn đạt đỉnh cao phong độ.",
+        "quick_links": "Liên kết nhanh",
+        "customer_service": "Chăm sóc khách hàng",
+        "contact_info": "Thông tin liên hệ",
+        "rights": "Bản quyền thuộc về Đăng Khoa Sport."
+    },
+    "common": {
+        "details": "Chi tiết",
+        "add_to_cart": "Thêm vào giỏ"
+    }
+}

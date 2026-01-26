@@ -1,0 +1,201 @@
+<%- include('partials/header') %>
+    <div class="container py-5">
+        <h2 class="fw-bold text-uppercase mb-5">Thanh Toán</h2>
+        <div class="row">
+            <!-- Left Column: Address & Info -->
+            <div class="col-lg-8 pe-lg-5">
+                <!-- Login Banner (if guest) -->
+                <% if (!user) { %>
+                    <div class="bg-dark text-white p-3 mb-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-uppercase">Đăng nhập để thanh toán nhanh hơn</span>
+                        <a href="/login" class="btn btn-outline-light btn-sm fw-bold text-uppercase">Đăng Nhập</a>
+                    </div>
+                    <% } %>
+
+                        <form id="checkoutForm">
+                            <!-- 1. Address -->
+                            <div class="mb-5">
+                                <h4 class="bg-light p-2 mb-4 fw-bold text-uppercase">1. Địa Chỉ Giao Hàng</h4>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label text-uppercase small fw-bold text-muted">Họ
+                                            *</label>
+                                        <input type="text" name="lastName" class="form-control rounded-0" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-uppercase small fw-bold text-muted">Tên
+                                            *</label>
+                                        <input type="text" name="firstName" class="form-control rounded-0"
+                                            value="<%= user ? user.name : '' %>" required>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label text-uppercase small fw-bold text-muted">Quốc
+                                            Gia</label>
+                                        <div class="input-group">
+                                            <select class="form-select rounded-0" name="country" readonly>
+                                                <option value="Vietnam" selected>Việt Nam</option>
+                                            </select>
+                                            <span class="input-group-text bg-white border-start-0 text-success"><i
+                                                    class="fas fa-check-circle"></i></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label text-uppercase small fw-bold text-muted">Tỉnh / Thành
+                                            phố *</label>
+                                        <select class="form-select rounded-0" id="provinceSelect" required>
+                                            <option value="">Chọn Tỉnh / Thành phố</option>
+                                        </select>
+                                        <input type="hidden" name="province" id="provinceName">
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label text-uppercase small fw-bold text-muted">Quận / Huyện
+                                            *</label>
+                                        <select class="form-select rounded-0" id="districtSelect" disabled required>
+                                            <option value="">Chọn Quận / Huyện</option>
+                                        </select>
+                                        <input type="hidden" name="city" id="districtName">
+                                        <!-- map to 'city' for backend compatibility -->
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label text-uppercase small fw-bold text-muted">Phường / Xã
+                                            *</label>
+                                        <select class="form-select rounded-0" id="wardSelect" disabled required>
+                                            <option value="">Chọn Phường / Xã</option>
+                                        </select>
+                                        <input type="hidden" name="ward" id="wardName">
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label class="form-label text-uppercase small fw-bold text-muted">Địa chỉ cụ thể
+                                            (Số nhà, đường) *</label>
+                                        <input type="text" name="addressLine" class="form-control rounded-0"
+                                            placeholder="Ví dụ: 123 Đường Nguyễn Huệ" required>
+                                    </div>
+
+                                    <div class="col-md-6 d-none">
+                                        <label class="form-label text-uppercase small fw-bold text-muted">Postal
+                                            Code</label>
+                                        <input type="text" name="postalCode" class="form-control rounded-0"
+                                            value="700000">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Info -->
+                            <div class="mb-5">
+                                <h4 class="mb-4 fw-bold text-uppercase">Thông Tin Liên Hệ</h4>
+                                <div class="mb-3">
+                                    <label class="form-label text-uppercase small fw-bold text-muted">Email *</label>
+                                    <input type="email" name="email" class="form-control rounded-0"
+                                        value="<%= user ? user.email : '' %>" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label text-uppercase small fw-bold text-muted">Số Điện Thoại
+                                        *</label>
+                                    <input type="tel" name="phone" class="form-control rounded-0" required
+                                        pattern=".{10,11}" title="Số điện thoại phải bao gồm 10 hoặc 11 chữ số">
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="fullName" id="combinedName">
+
+                            <button type="submit" class="btn btn-dark w-100 py-3 fw-bold text-uppercase rounded-0">Tiếp
+                                Tục Thanh Toán</button>
+                            <p class="text-muted small mt-2 text-center">Bằng việc tiếp tục, bạn đồng ý với Điều khoản
+                                và Điều kiện của chúng tôi.</p>
+                        </form>
+            </div>
+
+            <!-- Right Column: Order Summary -->
+            <div class="col-lg-4">
+                <div class="bg-light p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 text-uppercase fw-bold">Chi Tiết Đơn Hàng (<%= cart.totalQuantity ||
+                                cart.items.reduce((sum, item)=> sum + item.quantity, 0) %>)</h5>
+                        <i class="fas fa-chevron-up"></i>
+                    </div>
+
+                    <% cart.items.forEach(item=> { %>
+                        <div class="d-flex gap-3 mb-3">
+                            <div style="width: 80px; height: 80px; background: white; padding: 5px;">
+                                <img src="<%= (item.product.images && item.product.images[0]) || '/img/default-product.png' %>"
+                                    style="width: 100%; height: 100%; object-fit: contain;"
+                                    onerror="this.src='/img/default-product.png'">
+                            </div>
+                            <div>
+                                <div class="fw-bold small">
+                                    <%= item.product.name %>
+                                </div>
+                                <div class="text-muted small">SL: <%= item.quantity %>
+                                </div>
+                                <div class="text-muted small">Kích cỡ: <%= item.product.size || 'Tiêu chuẩn' %>
+                                </div>
+                            </div>
+                            <div class="ms-auto fw-bold">
+                                <%= formatMoney(item.product.price * item.quantity) %>
+                            </div>
+                        </div>
+                        <% }) %>
+
+                            <hr>
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tạm tính</span>
+                                <span>
+                                    <%= formatMoney(cart.totalPrice) %>
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Vận chuyển</span>
+                                <span>0 ₫</span>
+                            </div>
+
+                            <div class="input-group mb-3 mt-3">
+                                <input type="text" class="form-control rounded-0" placeholder="Mã giảm giá"
+                                    id="couponCode">
+                                <button class="btn btn-dark rounded-0" type="button" id="applyCouponBtn">Áp
+                                    dụng</button>
+                            </div>
+                            <div id="couponMessage" class="small mb-3"></div>
+
+                            <hr>
+
+
+                            <div class="d-flex justify-content-between mb-2">
+                                <strong class="text-uppercase">Tổng Cộng</strong>
+                                <strong class="fs-5">
+                                    <%= formatMoney(cart.totalPrice) %>
+                                </strong>
+                            </div>
+                            <div class="small text-muted text-end">Đã bao gồm VAT</div>
+                </div>
+
+                <div class="mt-4 p-3 border">
+                    <h6 class="fw-bold text-uppercase border-bottom pb-2">Giao Hàng Tiêu Chuẩn</h6>
+                    <div class="d-flex justify-content-between small">
+                        <span>Khu vực HCM</span>
+                        <span>1-2 ngày làm việc</span>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                        <span>Khu vực khác</span>
+                        <span>2-7 ngày làm việc</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Combine names for backend compatibility
+        document.getElementById('checkoutForm').addEventListener('submit', function () {
+            const first = this.querySelector('input[name="firstName"]').value;
+            const last = this.querySelector('input[name="lastName"]').value;
+            document.getElementById('combinedName').value = last + ' ' + first;
+        });
+    </script>
+    <%- include('partials/footer') %>
