@@ -1,0 +1,22 @@
+# Environment & secrets
+.env
+.env.*
+Admin/.env
+Customer/.env
+
+# Logs
+logs/
+server.log
+*.log
+
+# OS junk
+.DS_Store
+
+# IDE
+.vscode/
+
+# Runtime
+coverage/
+dist/
+build/
+node_modules/
