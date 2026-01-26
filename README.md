@@ -107,4 +107,4 @@ npm test
 | **User** | `john@example.com` | `password123` |
 
 ---
-*Created with ❤️ by Tuan (Fresher Node.js Developer)*
+*Created with ❤️ by Tuan (Node.js Developer)*
