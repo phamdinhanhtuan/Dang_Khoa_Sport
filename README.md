@@ -1,110 +1,144 @@
-# Đăng Khoa Sport - Backend (Portfolio Project)
+# Đăng Khoa Sport — Enterprise E‑commerce Platform
 
-Welcome to the backend API for **Đăng Khoa Sport**, a modern e-commerce platform specializing in sports equipment. This project simulates a real-world shopping experience with features like authentication, product management, and a shopping cart flow.
+## 🌐 Overview
 
-## 🚀 Tech Stack
+**Đăng Khoa Sport** is a secure, scalable, and production‑oriented e‑commerce platform for sports equipment retail. The system is designed with clean architecture principles, strong security controls, and real‑world business workflows.
 
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MongoDB (Mongoose ODM)
-- **Authentication**: JWT & Bcrypt based
-- **Validation**: Joi
-- **Testing**: Jest & Supertest
-- **Security**: Helmet, Rate Limiting, XSS Protection
+The platform follows a **dual‑application architecture**:
+
+1.  **Customer Storefront**: A server‑side rendered shopping experience optimized for performance, SEO, and mobile responsiveness.
+2.  **Administration Portal**: A secure, role‑based dashboard for managing products, orders, users, and operational analytics.
+
+This project simulates a real production system, focusing on authentication, authorization, inventory control, order fulfillment, and security best practices.
+
+## 🚀 Key Features
+
+### 🛍️ Customer Experience
+*   **Dynamic Navigation**: Hierarchical category system (tree data structure) for organizing extensive catalogs.
+*   **Advanced Search**: Full‑text search with filters (price, category, attributes).
+*   **Cart & Checkout**: Persistent cart management and multi‑step checkout flow.
+*   **User Accounts**: Profiles, order history, and wishlist/favorites.
+*   **Responsive UI**: Mobile‑first design using Bootstrap 5 and custom CSS.
+
+### 🛡️ Admin Management
+*   **Dashboard Analytics**: Revenue, orders, and user activity tracking.
+*   **Inventory Control**: Full CRUD product management with multi‑image uploads.
+*   **Category Management**: Multi‑level category structure management.
+*   **Order Workflow**: Status pipeline (Pending → Shipping → Delivered).
+*   **Access Control**: Role‑Based Access Control (RBAC) for admin routes.
+
+## 🛠️ Technology Stack
+
+| Domain | Technologies |
+| :--- | :--- |
+| **Backend Runtime** | Node.js |
+| **Server Framework** | Express.js (REST API & SSR) |
+| **Database** | MongoDB & Mongoose ODM |
+| **Frontend Engine** | EJS (Embedded JavaScript Templates) |
+| **Styling** | Bootstrap 5, SASS/SCSS, CSS3 |
+| **Authentication** | JWT for API access, Session‑based auth for admin flows |
+| **Validation** | Joi |
+| **Deployment** | Docker & Docker Compose |
+
+## 🔒 Security Measures
+
+*   **Environment Configuration**: All sensitive credentials (database URIs, secrets, API keys) are managed via `.env` files and are not committed to version control.
+*   **Authentication & Authorization**: JWT‑based authentication for API endpoints and session‑based authentication for admin dashboard flows. Role‑Based Access Control (RBAC) protects privileged operations.
+*   **Password Protection**: User passwords are hashed using bcrypt before storage.
+*   **Session Security**: HTTPOnly cookies and persistent session storage using connect-mongo.
+*   **Input Validation**: Request payload validation to prevent malformed data, NoSQL injection, and XSS attacks.
+*   **HTTP Security Headers**: Configured using Helmet.
+*   **Rate Limiting**: Protection against brute‑force login attempts and abusive traffic.
 
 ## 📂 Folder Structure
 
 ```
-src/
-├── config/         # Database and Cloudinary config
-├── controllers/    # Request handlers (Business logic)
-├── middlewares/    # Auth, Error Handling, Security
-├── models/         # Mongoose Schemas (User, Product, Cart, Order)
-├── routes/         # API Routes declaration
-├── services/       # Service layer (optional separation)
-├── utils/          # Helpers (AppError, logger)
-├── validators/     # Joi validation schemas
-├── views/          # EJS templates (for server-side rendering)
-└── app.js          # Express app setup
+Dang_Khoa_Sport/
+├── Admin/              # Administration Portal
+│   ├── src/
+│   │   ├── config/     # Database and Cloudinary configuration
+│   │   ├── controllers/# Request handlers (business logic)
+│   │   ├── middleware/ # Auth, RBAC, and logic layers
+│   │   ├── models/     # Mongoose schemas
+│   │   └── views/      # Admin EJS templates
+│   └── server.js       # Entry point
+│
+├── Customer/           # Customer Storefront
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── middlewares/
+│   │   ├── models/
+│   │   └── views/      # Storefront EJS templates
+│   └── server.js       # Entry point
+│
+└── README.md           # Documentation
 ```
 
-## 🛠️ Setup & Installation
+## ⚙️ Installation & Setup
 
-1.  **Clone the repository**
-    ```bash
-    git clone https://github.com/yourusername/dang-khoa-sport.git
-    cd dang-khoa-sport
-    ```
+### Prerequisites
+*   Node.js v16+
+*   MongoDB v5+
 
-2.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
-
-3.  **Environment Variables**
-    Create a `.env` file in the root directory:
-    ```env
-    PORT=3000
-    MONGO_URI=mongodb://localhost:27017/dang-khoa-sport
-    JWT_SECRET=your-super-secure-secret-key-min-32-chars
-    SESSION_SECRET=your-session-secret
-    CLOUDINARY_CLOUD_NAME=your_name
-    CLOUDINARY_API_KEY=your_key
-    CLOUDINARY_API_SECRET=your_secret
-    NODE_ENV=development
-    ```
-
-4.  **Seed Database (Optional)**
-    Populate the DB with demo data:
-    ```bash
-    npm run seed
-    ```
-
-5.  **Run the Server**
-    ```bash
-    # Development Mode
-    npm run dev
-
-    # Production Mode
-    npm start
-    ```
-
-## 🧪 Running Tests
-
-This project includes integration tests using Jest.
+### 1. Clone Repository
 ```bash
-npm test
+git clone https://github.com/phamdinhanhtuan/Dang_Khoa_Sport.git
+cd Dang_Khoa_Sport
 ```
 
-## 📡 API Endpoints
+### 2. Setup Customer App
+```bash
+cd Customer
+npm install
+# Configure .env file (see below)
+npm run dev
+```
 
-### Auth
-- `POST /api/auth/register` - Create new account
-- `POST /api/auth/login` - Login to account
-- `GET /api/auth/me` - Get current user info
+### 3. Setup Admin App
+```bash
+# Open a new terminal
+cd ../Admin
+npm install
+# Configure .env file (see below)
+npm run dev
+```
 
-### Products
-- `GET /api/products` - List all products (Pagination supported)
-- `GET /api/products/:id` - Get product details
-- `POST /api/products` - Create product (Admin only)
-- `PATCH /api/products/:id` - Update product (Admin only)
+### 4. Environment Variables
+Create a `.env` file in **both** `Admin` and `Customer` directories:
 
-### Cart
-- `GET /api/cart` - View cart
-- `POST /api/cart` - Add item
-- `PUT /api/cart/:productId` - Update item quantity
-- `DELETE /api/cart/:productId` - Remove item
+```env
+PORT=3000 (Customer) / 3001 (Admin)
+MONGO_URI=mongodb://localhost:27017/dangkhoa_sport
+JWT_SECRET=your-secure-jwt-secret-min-32-chars
+SESSION_SECRET=your-session-secret
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+NODE_ENV=development
+```
 
-### Orders
-- `POST /api/orders` - Checkout (Create Order)
-- `GET /api/orders/my` - Get user order history
+### 5. Seed Database (Optional)
+```bash
+cd Admin
+npm run seed
+```
 
-## 👤 Sample Accounts (from Seed)
+## 📡 API Endpoints (Sample)
 
-| Role | Email | Password |
-|------|-------|----------|
-| **Admin** | `admin@dangkhoasport.com` | `password123` |
-| **User** | `john@example.com` | `password123` |
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| **POST** | `/api/auth/register` | Create a new user account |
+| **POST** | `/api/auth/login` | Authenticate user & get token |
+| **GET** | `/api/products` | List mobile-friendly products |
+| **GET** | `/api/orders/my` | Get current user's order history |
+| **POST** | `/api/cart` | Add item to shopping cart |
+
+## 📌 Notes
+*   This repository does not contain secrets, credentials, or production keys.
+*   `node_modules` and `.env` files are excluded via `.gitignore`.
+*   Designed for portfolio, learning, and production‑style architecture demonstration.
 
 ---
 *Created with ❤️ by Tuan (Node.js Developer)*
+
+© 2026 Đăng Khoa Sport. All rights reserved.
