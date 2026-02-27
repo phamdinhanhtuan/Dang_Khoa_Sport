@@ -1,0 +1,88 @@
+<%- include('partials/header') %>
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h3 class="fw-bold mb-0">Category Management</h3>
+            <p class="text-muted small mb-0">Organize your product catalog</p>
+        </div>
+        <div class="d-flex gap-2">
+            <form action="/admin/categories" method="GET" class="d-flex">
+                <input type="text" name="q" class="form-control me-2" placeholder="Search categories..."
+                    value="<%= (typeof searchQuery !== 'undefined') ? searchQuery : '' %>">
+                <button type="submit" class="btn btn-outline-secondary"><i class="fas fa-search"></i></button>
+            </form>
+            <a href="/admin/categories/new" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Add Category</a>
+            <a href="/admin/categories/seed" class="btn btn-warning"
+                onclick="return confirm('This will reset/add default categories. Are you sure?');"><i
+                    class="fas fa-sync me-1"></i> Seed Data</a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Name</th>
+                            <th>Group (Mega Menu)</th>
+                            <th>Parent Category</th>
+                            <th>Slug</th>
+                            <th class="text-end pe-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (categories.length> 0) { %>
+                            <% categories.forEach(cat=> { %>
+                                <tr>
+                                    <td class="ps-4 fw-bold">
+                                        <%= cat.name %>
+                                    </td>
+                                    <td>
+                                        <% if (cat.group==='team-sports' ) { %>
+                                            <span class="badge bg-primary">Team Sports</span>
+                                            <% } else if (cat.group==='racket-individual' ) { %>
+                                                <span class="badge bg-success">Racket & Individual</span>
+                                                <% } else if (cat.group==='billiards-accessories' ) { %>
+                                                    <span class="badge bg-dark">Billiards & Acc</span>
+                                                    <% } else if (cat.group==='brands' ) { %>
+                                                        <span class="badge bg-info text-dark">Brands</span>
+                                                        <% } else if (cat.group==='sale' ) { %>
+                                                            <span class="badge bg-danger">Sale</span>
+                                                            <% } else { %>
+                                                                <span class="badge bg-secondary">Other</span>
+                                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (cat.parent) { %>
+                                            <i class="fas fa-level-up-alt text-muted me-1"></i>
+                                            <%= cat.parent.name %>
+                                                <% } else { %>
+                                                    <span class="text-muted small">Top Level</span>
+                                                    <% } %>
+                                    </td>
+                                    <td>
+                                        <%= cat.slug %>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="/admin/categories/<%= cat._id %>/edit"
+                                            class="btn btn-sm btn-outline-primary me-1"><i class="fas fa-edit"></i></a>
+                                        <a href="/admin/categories/<%= cat._id %>/delete"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('Are you sure? This might affect products linked to this category.');"><i
+                                                class="fas fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4">No categories found.</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

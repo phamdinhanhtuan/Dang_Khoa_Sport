@@ -25,6 +25,7 @@ const errorHandler = (err, req, res, next) => {
     // Ensure 118n helper is available
     res.locals.__ = res.locals.__ || (req && req.__) || ((key) => key);
     res.locals.locale = res.locals.locale || 'vi';
+    res.locals.megaMenu = res.locals.megaMenu || {};
 
     res.status(err.statusCode).render('error', {
         title: 'Something went wrong!',

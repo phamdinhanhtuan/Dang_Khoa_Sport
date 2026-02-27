@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Authentication | Đăng Khoa Sport</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #4318ff;
+            --bg-shade: #f4f7fe;
+            --text-main: #2b3674;
+        }
+
+        body {
+            background-color: var(--bg-shade);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            border: none;
+        }
+
+        .brand-logo {
+            color: var(--primary-blue);
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-left: 5px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 18px;
+            border: 1px solid #dcdfe6;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.1);
+        }
+
+        .btn-auth {
+            background: var(--primary-blue);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn-auth:hover {
+            background: #3311cc;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(67, 24, 255, 0.2);
+        }
+
+        .auth-footer {
+            margin-top: 25px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #a3aed0;
+        }
+
+        .alert-error {
+            background-color: #fff5f5;
+            color: #e53e3e;
+            border: 1px solid #feb2b2;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 0.85rem;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="brand-logo">
+                <i class="fas fa-bolt me-2 text-warning"></i>DK SPORT
+            </div>
+            <p class="text-center text-muted small mb-4 text-uppercase fw-bold" style="letter-spacing: 1px;">Admin
+                Control Panel</p>
+
+            <h1 class="auth-title">Sign In</h1>
+
+            <form id="adminLoginForm">
+                <div class="mb-4">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="email" class="form-control" placeholder="admin@dksport.com" required
+                        autocomplete="email">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Min. 8 characters" required
+                        autocomplete="current-password">
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-auth">
+                        <span id="btnText">Sign In</span>
+                        <span id="btnLoader" class="spinner-border spinner-border-sm d-none"></span>
+                    </button>
+                </div>
+            </form>
+
+            <div id="error-msg" class="alert-error d-none">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span id="errorText"></span>
+            </div>
+
+            <div class="auth-footer">
+                <a href="/" class="text-decoration-none text-muted">
+                    <i class="fas fa-arrow-left me-1"></i> Back to storefront
+                </a>
+            </div>
+        </div>
+
+        <p class="text-center mt-4 text-muted small">© 2026 Đăng Khoa Sport. All rights reserved.</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('adminLoginForm');
+        const btnText = document.getElementById('btnText');
+        const btnLoader = document.getElementById('btnLoader');
+        const errorMsg = document.getElementById('error-msg');
+        const errorText = document.getElementById('errorText');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // UI State
+            errorMsg.classList.add('d-none');
+            btnText.classList.add('d-none');
+            btnLoader.classList.remove('d-none');
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    if (data.data?.user?.role === 'admin') {
+                        window.location.href = '/admin';
+                    } else {
+                        throw new Error('Unauthorized: Admin access only.');
+                    }
+                } else {
+                    throw new Error(data.message || 'Authentication failed');
+                }
+            } catch (err) {
+                errorText.textContent = err.message;
+                errorMsg.classList.remove('d-none');
+                btnText.classList.remove('d-none');
+                btnLoader.classList.add('d-none');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<%- include('partials/header') %>
+
+    <h3 class="mb-4">User Management</h3>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Joined Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (users.length> 0) { %>
+                            <% users.forEach(user=> { %>
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-secondary text-white rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                                style="width: 35px; height: 35px;">
+                                                <%= user.name.charAt(0).toUpperCase() %>
+                                            </div>
+                                            <strong>
+                                                <%= user.name %>
+                                            </strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <%= user.email %>
+                                    </td>
+                                    <td>
+                                        <% if (user.role==='admin' ) { %>
+                                            <span class="badge bg-danger">ADMIN</span>
+                                            <% } else { %>
+                                                <span class="badge bg-secondary">USER</span>
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <%= new Date(user.createdAt).toLocaleDateString() %>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4">No users found.</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

@@ -1,144 +1,98 @@
-# Đăng Khoa Sport — Enterprise E‑commerce Platform
+# Đăng Khoa Sport – E-Commerce Platform
 
-## 🌐 Overview
+## Overview
+Đăng Khoa Sport is a full-stack e-commerce project built with Node.js and MongoDB. The system separates the Storefront and Admin Portal into independent processes while sharing the same service layer and database.
 
-**Đăng Khoa Sport** is a secure, scalable, and production‑oriented e‑commerce platform for sports equipment retail. The system is designed with clean architecture principles, strong security controls, and real‑world business workflows.
+This project was developed to practice scalable backend architecture, authentication, and role-based access control in a real-world commerce scenario.
 
-The platform follows a **dual‑application architecture**:
+## Architecture
+The application follows a layered architecture:
+- **Controllers**: Handle HTTP requests and responses.
+- **Services**: Contain business logic (Service-Layer Baseline).
+- **Models**: Mongoose schemas and data persistence.
+- **Views**: EJS templates for server-side rendering (SSR).
 
-1.  **Customer Storefront**: A server‑side rendered shopping experience optimized for performance, SEO, and mobile responsiveness.
-2.  **Administration Portal**: A secure, role‑based dashboard for managing products, orders, users, and operational analytics.
+### Services
+| Component | Port | Description |
+| :--- | :--- | :--- |
+| **Storefront** | `3000` | Customer interface |
+| **Admin Portal** | `3100` | Management system |
+| **MongoDB** | `27017` | Data storage |
 
-This project simulates a real production system, focusing on authentication, authorization, inventory control, order fulfillment, and security best practices.
-
-## 🚀 Key Features
-
-### 🛍️ Customer Experience
-*   **Dynamic Navigation**: Hierarchical category system (tree data structure) for organizing extensive catalogs.
-*   **Advanced Search**: Full‑text search with filters (price, category, attributes).
-*   **Cart & Checkout**: Persistent cart management and multi‑step checkout flow.
-*   **User Accounts**: Profiles, order history, and wishlist/favorites.
-*   **Responsive UI**: Mobile‑first design using Bootstrap 5 and custom CSS.
-
-### 🛡️ Admin Management
-*   **Dashboard Analytics**: Revenue, orders, and user activity tracking.
-*   **Inventory Control**: Full CRUD product management with multi‑image uploads.
-*   **Category Management**: Multi‑level category structure management.
-*   **Order Workflow**: Status pipeline (Pending → Shipping → Delivered).
-*   **Access Control**: Role‑Based Access Control (RBAC) for admin routes.
-
-## 🛠️ Technology Stack
-
-| Domain | Technologies |
-| :--- | :--- |
-| **Backend Runtime** | Node.js |
-| **Server Framework** | Express.js (REST API & SSR) |
-| **Database** | MongoDB & Mongoose ODM |
-| **Frontend Engine** | EJS (Embedded JavaScript Templates) |
-| **Styling** | Bootstrap 5, SASS/SCSS, CSS3 |
-| **Authentication** | JWT for API access, Session‑based auth for admin flows |
-| **Validation** | Joi |
-| **Deployment** | Docker & Docker Compose |
-
-## 🔒 Security Measures
-
-*   **Environment Configuration**: All sensitive credentials (database URIs, secrets, API keys) are managed via `.env` files and are not committed to version control.
-*   **Authentication & Authorization**: JWT‑based authentication for API endpoints and session‑based authentication for admin dashboard flows. Role‑Based Access Control (RBAC) protects privileged operations.
-*   **Password Protection**: User passwords are hashed using bcrypt before storage.
-*   **Session Security**: HTTPOnly cookies and persistent session storage using connect-mongo.
-*   **Input Validation**: Request payload validation to prevent malformed data, NoSQL injection, and XSS attacks.
-*   **HTTP Security Headers**: Configured using Helmet.
-*   **Rate Limiting**: Protection against brute‑force login attempts and abusive traffic.
-
-## 📂 Folder Structure
-
-```
-Dang_Khoa_Sport/
-├── Admin/              # Administration Portal
-│   ├── src/
-│   │   ├── config/     # Database and Cloudinary configuration
-│   │   ├── controllers/# Request handlers (business logic)
-│   │   ├── middleware/ # Auth, RBAC, and logic layers
-│   │   ├── models/     # Mongoose schemas
-│   │   └── views/      # Admin EJS templates
-│   └── server.js       # Entry point
-│
-├── Customer/           # Customer Storefront
-│   ├── src/
-│   │   ├── controllers/
-│   │   ├── middlewares/
-│   │   ├── models/
-│   │   └── views/      # Storefront EJS templates
-│   └── server.js       # Entry point
-│
-└── README.md           # Documentation
+## Project Structure
+```text
+src/
+├── controllers/    # Request handlers
+├── services/       # Business logic (shared)
+├── models/         # Database schemas
+├── routes/         # Express routing
+├── middleware/     # Auth, error handling, etc.
+├── views/          # EJS templates (Storefront)
+│   └── admin/      # EJS templates (Admin Portal)
+└── app.js          # Express app configuration
 ```
 
-## ⚙️ Installation & Setup
+## Features
+### Authentication
+- JWT-based authentication.
+- Role-based access control (RBAC).
+- Bcrypt password hashing.
 
-### Prerequisites
-*   Node.js v16+
-*   MongoDB v5+
+### E-commerce Flow
+- Product & Category CRUD.
+- Session-based cart management.
+- Order creation and status tracking.
+- Admin dashboard with revenue aggregation.
+- Low stock warning logic.
+- Basic chatbot logic for order inquiries.
 
-### 1. Clone Repository
-```bash
-git clone https://github.com/phamdinhanhtuan/Dang_Khoa_Sport.git
-cd Dang_Khoa_Sport
-```
+## Tech Stack
+- **Backend**: Node.js, Express.js.
+- **Database**: MongoDB (Mongoose).
+- **Frontend**: EJS (SSR), Bootstrap 5.
+- **Infrastructure**: Docker support, environment-aware scripts.
 
-### 2. Setup Customer App
-```bash
-cd Customer
-npm install
-# Configure .env file (see below)
-npm run dev
-```
+## Installation
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+2. **Run Storefront**:
+   ```bash
+   npm start
+   ```
+3. **Run Admin Portal**:
+   ```bash
+   npm run admin
+   ```
 
-### 3. Setup Admin App
-```bash
-# Open a new terminal
-cd ../Admin
-npm install
-# Configure .env file (see below)
-npm run dev
-```
-
-### 4. Environment Variables
-Create a `.env` file in **both** `Admin` and `Customer` directories:
-
+## Environment Variables
+Create a `.env` file in the root directory:
 ```env
-PORT=3000 (Customer) / 3001 (Admin)
-MONGO_URI=mongodb://localhost:27017/dangkhoa_sport
-JWT_SECRET=your-secure-jwt-secret-min-32-chars
-SESSION_SECRET=your-session-secret
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
+PORT=3000
+MONGO_URI=mongodb://localhost:27017/dang-khoa-sport
+JWT_SECRET=your_jwt_secret
+SESSION_SECRET=your_session_secret
 NODE_ENV=development
 ```
 
-### 5. Seed Database (Optional)
-```bash
-cd Admin
-npm run seed
-```
+## Known Limitations
+- **Image Storage**: Currently using local storage (can be configured for Cloudinary).
+- **Payment**: Simple order flow without real-time payment gateway integration (Momo/VNPay).
+- **Search**: Basic string matching; not using Elasticsearch or Atlas Search.
 
-## 📡 API Endpoints (Sample)
+## Future Improvements
+- Integrate real-time notifications for new orders (Socket.io).
+- Add payment gateway integration (VNPay/Momo).
+- Implement advanced AI recommendation engine.
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| **POST** | `/api/auth/register` | Create a new user account |
-| **POST** | `/api/auth/login` | Authenticate user & get token |
-| **GET** | `/api/products` | List mobile-friendly products |
-| **GET** | `/api/orders/my` | Get current user's order history |
-| **POST** | `/api/cart` | Add item to shopping cart |
-
-## 📌 Notes
-*   This repository does not contain secrets, credentials, or production keys.
-*   `node_modules` and `.env` files are excluded via `.gitignore`.
-*   Designed for portfolio, learning, and production‑style architecture demonstration.
+## Purpose
+- Clean service-layer architecture.
+- Proper authentication & authorization.
+- Separation between public and private systems.
+- Practice RESTful API and SSR patterns.
 
 ---
-*Created with ❤️ by Tuan (Node.js Developer)*
+*Created with ❤️ by Tuan (Node.js Developer)
 
 © 2026 Đăng Khoa Sport. All rights reserved.

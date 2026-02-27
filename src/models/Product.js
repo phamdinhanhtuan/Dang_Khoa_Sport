@@ -24,6 +24,11 @@ const productSchema = new mongoose.Schema({
     },
     description: String,
     brand: String,
+    gender: {
+        type: String,
+        enum: ['male', 'female', 'kid', 'unisex'],
+        default: 'unisex'
+    },
     category: {
         type: mongoose.Schema.ObjectId,
         ref: 'Category'
@@ -38,6 +43,23 @@ const productSchema = new mongoose.Schema({
     ratingsQuantity: {
         type: Number,
         default: 0
+    },
+    viewCount: {
+        type: Number,
+        default: 0
+    },
+    soldCount: {
+        type: Number,
+        default: 0
+    },
+    discountPrice: {
+        type: Number,
+        default: null
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false,
+        select: false
     }
 }, {
     timestamps: true,

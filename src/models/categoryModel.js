@@ -10,6 +10,28 @@ const categorySchema = new mongoose.Schema({
     },
     slug: String,
     description: String,
+    group: {
+        type: String,
+        enum: ['team-sports', 'racket-individual', 'billiards-accessories', 'brands', 'other', 'sale', 'featured'],
+        default: 'other'
+    },
+    parent: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Category',
+        default: null
+    },
+    showInHeader: {
+        type: Boolean,
+        default: false
+    },
+    showAsHot: {
+        type: Boolean,
+        default: false
+    },
+    order: {
+        type: Number,
+        default: 0
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -17,7 +39,9 @@ const categorySchema = new mongoose.Schema({
 });
 
 categorySchema.pre('save', async function () {
-    this.slug = slugify(this.name, { lower: true });
+    if (this.isModified('name')) {
+        this.slug = slugify(this.name, { lower: true });
+    }
 });
 
 const Category = mongoose.model('Category', categorySchema);

@@ -1,300 +1,235 @@
-/* Global Variables */
+/* Google Fonts - PUMA Style */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Roboto+Condensed:wght@400;700&family=Roboto:wght@400;500&display=swap');
+
 :root {
-    --primary-color: #000000;
-    --secondary-color: #CE1126;
-    /* Puma Red-ish */
-    --accent-color: #457b9d;
-    --light-bg: #f8f9fa;
-    --text-color: #121212;
-    --border-color: #e5e5e5;
-    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --hover-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    --radius: 0px;
-    /* Sharp edges for premium sports look */
+    --puma-black: #181818;
+    --puma-white: #ffffff;
+    --puma-red: #cc0000;
+    --gray-light: #f4f4f4;
 }
 
 body {
-    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-    color: var(--text-color);
-    background-color: #fff;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--puma-white);
+    color: var(--puma-black);
     overflow-x: hidden;
 }
 
-a {
-    text-decoration: none;
-    transition: var(--transition);
-    color: var(--primary-color);
-}
-
+/* TYPOGRAPHY */
 h1,
 h2,
 h3,
 h4,
 h5,
-h6 {
-    font-weight: 800;
-    color: var(--primary-color);
-    letter-spacing: -0.02em;
+.btn,
+.nav-link,
+.hero-title,
+.card-title {
+    font-family: 'Oswald', sans-serif;
     text-transform: uppercase;
-}
-
-/* Navbar */
-.navbar {
-    background-color: #fff !important;
-    padding: 1rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.navbar-brand {
-    font-weight: 900;
-    font-size: 1.5rem;
-    letter-spacing: 1px;
-}
-
-.nav-link {
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem !important;
     letter-spacing: 0.5px;
 }
 
-/* Hero Section */
-/* Hero Section */
-.hero-section {
-    position: relative;
-    background: #000;
-    overflow: hidden;
-    margin-bottom: 0;
-    height: 60vh;
-    min-height: 400px;
+/* HEADER STYLE */
+.navbar {
+    background-color: var(--puma-black) !important;
+    padding: 0 1rem;
+    height: 80px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
-.hero-bg {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.2) 100%),
-        url('/img/hero-bg.jpg');
-    background-size: cover;
-    background-position: top center !important;
-    height: 100%;
-    width: 100%;
-}
-
-/* Enhancements */
-.hover-scale {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.hover-scale:hover {
-    transform: scale(1.05);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-}
-
-.tracking-wider {
-    letter-spacing: 0.1em;
-}
-
-/* Cards & Products */
-.card {
-    border: none;
-    border-radius: var(--radius);
-}
-
-.start-50 {
-    left: 50% !important;
-}
-
-.translate-middle-x {
-    transform: translateX(-50%) !important;
-}
-
-/* Product Cards */
-.product-card {
-    border: none;
-    border-radius: var(--radius);
-    transition: var(--transition);
-    background: #fff;
-    cursor: pointer;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--hover-shadow);
-}
-
-.product-img-wrapper {
-    position: relative;
-    width: 100%;
-    padding-top: 100%;
-    overflow: hidden;
-    background: #f8f9fa;
-}
-
-.product-img-wrapper img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    max-width: 95%;
-    max-height: 95%;
+.navbar-brand img {
+    height: 70px;
     width: auto;
-    height: auto;
     object-fit: contain;
-    transition: transform 0.5s ease;
+    transition: transform 0.3s;
 }
 
-.product-card:hover .product-img-wrapper img {
-    transform: translate(-50%, -50%) scale(1.08);
+.navbar-brand img:hover {
+    transform: scale(1.1) rotate(5deg);
 }
 
-/* Forms */
-.form-control {
-    border-radius: 0;
-    padding: 0.8rem 1rem;
-    border: 1px solid #e5e5e5;
+.nav-link {
+    color: var(--puma-white) !important;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 0 12px;
+    position: relative;
+    padding: 28px 0;
+}
+
+/* MEGA MENU LOGIC */
+.nav-item.dropdown:hover .mega-menu-content {
+    display: block !important;
+    opacity: 1;
+    visibility: visible;
+    margin-top: 0;
+}
+
+.mega-menu-content {
+    display: none;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: var(--puma-black);
+    color: white;
+    border-top: 4px solid var(--puma-red) !important;
+    z-index: 1000;
+    padding: 20px 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.mega-menu-content a {
+    color: #bbb !important;
+    text-decoration: none;
+    transition: 0.2s;
+    display: block;
+    padding: 5px 0;
     font-size: 0.9rem;
-    transition: var(--transition);
 }
 
+.mega-menu-content a:hover {
+    color: #fff !important;
+    padding-left: 5px;
+    border-left: 2px solid var(--puma-red);
+}
+
+/* SEARCH BAR POLISH */
+/* SEARCH BAR POLISH */
 .form-control:focus {
-    box-shadow: none;
-    border-color: #000;
+    color: #000;
+    background-color: #fff;
+    border-color: var(--puma-red);
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(204, 0, 0, 0.25);
 }
 
-/* Button Unification - Premium Black Theme */
-.btn {
+.navbar input.form-control {
+    background-color: #fff;
+    /* Light input bg for search */
+    border: 1px solid #ccc;
+    color: #000;
+}
+
+.navbar .btn-outline-light:hover {
+    background-color: var(--puma-red);
+    border-color: var(--puma-red);
+}
+
+/* GLOBAL BUTTON OVERRIDES (No more Blue!) */
+.btn-primary {
+    background-color: var(--puma-black) !important;
+    border-color: var(--puma-black) !important;
+    color: #fff !important;
+    font-weight: bold;
     border-radius: 0;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    padding: 0.8rem 1.5rem;
-    transition: var(--transition);
-    font-size: 0.85rem;
-}
-
-.btn-primary,
-.btn-dark {
-    background-color: #000;
-    border-color: #000;
-    color: #fff;
+    /* Sharp edges */
+    padding: 10px 25px;
 }
 
 .btn-primary:hover,
-.btn-dark:hover {
-    background-color: #333;
-    border-color: #333;
-    transform: translateY(-1px);
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--puma-red) !important;
+    border-color: var(--puma-red) !important;
 }
 
-
-
-.product-info {
-    padding: 0 0.5rem 1rem;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+.btn-outline-dark {
+    border-radius: 0;
+    font-weight: bold;
 }
 
-.product-brand {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #666;
-    text-transform: uppercase;
-    margin-bottom: 0.25rem;
-}
-
-.product-name {
-    font-size: 0.95rem;
-    /* Smaller font */
-    font-weight: 600;
-    color: #000;
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    /* Limit to 2 lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-transform: none;
-    /* No all-caps */
-}
-
-.product-price {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #000;
-    margin-top: auto;
-    /* Push to bottom */
-}
-
-.btn-add-cart {
+/* HERO BANNER SECTION */
+.hero-section {
+    position: relative;
     width: 100%;
-    background: #fff;
-    border: 1px solid #000;
-    color: #000;
-    padding: 0.5rem;
-    font-size: 0.8rem;
+    height: 85vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.hero-overlay {
+    text-align: center;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2rem;
+    backdrop-filter: blur(3px);
+}
+
+.hero-title {
+    font-size: 4.5rem;
     font-weight: 700;
-    text-transform: uppercase;
-    margin-top: 1rem;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: var(--transition);
+    line-height: 1;
+    margin-bottom: 1rem;
+    text-shadow: 3px 3px 0px #000;
 }
 
-.product-card:hover .btn-add-cart {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.product-card:hover .btn-add-cart:hover {
+.hero-subtitle {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
     background: #000;
     color: #fff;
+    display: inline-block;
+    padding: 5px 15px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .display-1 {
-        font-size: 3rem;
-    }
+/* PRODUCT CARDS */
+.product-card {
+    border: none;
+    transition: all 0.3s;
+    background: transparent;
+}
 
-    .display-2 {
-        font-size: 2.5rem;
-    }
+.card-img-container {
+    height: 320px;
+    background-color: #f0f0f0;
+    overflow: hidden;
+    position: relative;
+}
 
-    .display-3 {
-        font-size: 2rem;
-    }
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
 
-    .hero-section {
-        height: 50vh !important;
-        min-height: 300px;
-    }
+.product-card:hover .card-img-top {
+    transform: scale(1.08);
+}
 
-    .navbar-collapse {
-        background: #fff;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        padding: 1rem;
-        border-bottom: 1px solid #eee;
-    }
+.hover-red:hover {
+    color: var(--puma-red) !important;
+}
 
-    .row.g-4 {
-        --bs-gutter-x: 0.5rem;
-        --bs-gutter-y: 1rem;
-    }
+/* AUTH FORMS (Login/Register) */
+.auth-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
 
-    .container {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
+/* CHATBOT FIXES */
+#chatbot-form input.form-control {
+    color: #000 !important;
+    /* Force black text */
+    background-color: #f8f9fa !important;
+    /* Light background */
+}
+
+#chatbot-form input.form-control::placeholder {
+    color: #6c757d;
+    /* Dark gray placeholder */
 }

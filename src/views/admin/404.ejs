@@ -1,0 +1,23 @@
+<%- include('partials/header') %>
+
+    <div class="row min-vh-75 align-items-center justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="card border-0 shadow-lg p-5">
+                <h1 class="display-1 fw-bold text-primary mb-0">404</h1>
+                <div class="bg-primary mx-auto mb-4" style="width: 50px; height: 4px; border-radius: 2px;"></div>
+                <h2 class="text-dark fw-bold mb-3">Page Not Found</h2>
+                <p class="text-muted mb-4">The page you are looking for might have been removed, had its name changed,
+                    or is temporarily unavailable.</p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="/admin" class="btn btn-primary px-4">
+                        <i class="fas fa-home me-2"></i>Dashboard
+                    </a>
+                    <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Go Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

@@ -1,0 +1,40 @@
+<%- include('../partials/header') %>
+
+    <div class="container mb-5" style="margin-top: 50px;">
+        <div class="auth-container border border-2 border-dark rounded-0 p-5">
+            <h2 class="text-center mb-4 text-uppercase fw-bold">Đăng Nhập</h2>
+
+            <% if (locals.error) { %>
+                <div class="alert alert-danger rounded-0 border-danger mb-4" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form action="/login" method="POST">
+                        <div class="form-group mb-3">
+                            <label for="email" class="form-label fw-bold">Email</label>
+                            <input type="email" class="form-control rounded-0 p-3" id="email" name="email"
+                                placeholder="Nhập email của bạn" required>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label for="password" class="form-label fw-bold">Mật khẩu</label>
+                            <input type="password" class="form-control rounded-0 p-3" id="password" name="password"
+                                placeholder="Nhập mật khẩu" required>
+                        </div>
+
+                        <button type="submit"
+                            class="btn btn-primary w-100 py-3 text-uppercase rounded-0 fw-bold fs-5">ĐĂNG
+                            NHẬP</button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p>Chưa có tài khoản? <a href="/auth/signup"
+                                class="text-danger fw-bold text-decoration-none">Đăng ký
+                                ngay</a></p>
+                    </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>

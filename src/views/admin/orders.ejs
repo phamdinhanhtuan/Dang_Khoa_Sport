@@ -1,0 +1,66 @@
+<%- include('partials/header') %>
+
+    <h3 class="mb-4">Order Management</h3>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (orders.length> 0) { %>
+                            <% orders.forEach(order=> { %>
+                                <tr>
+                                    <td><span class="text-muted">#<%= order._id.toString().slice(-6) %></span></td>
+                                    <td>
+                                        <div>
+                                            <%= order.user ? order.user.name : 'Unknown' %>
+                                        </div>
+                                        <small class="text-muted">
+                                            <%= order.user ? order.user.email : '' %>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        <%= new Date(order.createdAt).toLocaleDateString('vi-VN') %>
+                                    </td>
+                                    <td>
+                                        <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                            }).format(order.totalAmount) %>
+                                    </td>
+                                    <td>
+                                        <% let badgeClass='secondary' ; if (order.status==='completed' )
+                                            badgeClass='success' ; else if (order.status==='pending' )
+                                            badgeClass='warning' ; else if (order.status==='shipping' )
+                                            badgeClass='info' ; else if (order.status==='cancelled' )
+                                            badgeClass='danger' ; %>
+                                            <span class="badge bg-<%= badgeClass %> text-uppercase">
+                                                <%= order.status %>
+                                            </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/orders/<%= order._id %>"
+                                            class="btn btn-sm btn-primary">Details</a>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" class="text-center py-4">No orders found.</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

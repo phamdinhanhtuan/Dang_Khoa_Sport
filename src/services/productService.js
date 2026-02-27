@@ -1,60 +1,194 @@
-const productRepository = require('../repositories/productRepository');
-const cache = require('../utils/cache');
+const Product = require('../models/Product');
+const Category = require('../models/categoryModel');
+const categoryService = require('./categoryService');
+const AppError = require('../utils/appError');
 
-exports.createProduct = async (productData) => {
-    // Clear cache when new product is added
-    await cache.del('all_products');
-    return await productRepository.create(productData);
-};
+class ProductService {
+    /**
+     * Fetch all data required for the Homepage
+     * @returns {Object} { newArrivals, sectionProducts }
+     */
+    async getHomePageData() {
+        // 1. New Arrivals
+        const newArrivals = await Product.find().sort('-createdAt').limit(8);
 
-exports.getAllProducts = async (queryString) => {
-    // Basic caching strategy: cache the result based on queryString
-    // Note: Complex query keys might get large, keeping it simple for now
-    const cacheKey = `products_${JSON.stringify(queryString)}`;
-    const cachedData = await cache.get(cacheKey);
+        // 2. Helper to find category IDs
+        const findCategoryIds = async (regex) => {
+            const cats = await Category.find({ name: { $regex: regex, $options: 'i' } });
+            return cats.map(c => c._id);
+        };
 
-    if (cachedData) {
-        return JSON.parse(cachedData);
+        // 3. Fetch specific sections
+        const sections = [
+            { key: 'pickleballProducts', regex: 'Pickleball' },
+            { key: 'volleyballProducts', regex: 'Bóng chuyền' },
+            { key: 'runningProducts', regex: 'Chạy' },
+            { key: 'billiardProducts', regex: 'Bi-a' },
+            { key: 'basketballProducts', regex: 'Bóng rổ' }
+        ];
+
+        const sectionData = {};
+
+        await Promise.all(sections.map(async (sec) => {
+            const ids = await findCategoryIds(sec.regex);
+            sectionData[sec.key] = await Product.find({ category: { $in: ids } }).limit(4).sort('-createdAt');
+        }));
+
+
+        // 4. Fetch Mega Menu Data
+        const megaMenu = await categoryService.getMegaMenuData();
+
+        return { newArrivals, megaMenu, ...sectionData };
     }
 
-    const result = await productRepository.findAllAdvanced(queryString);
+    /**
+     * Filter, Search, and Sort Products based on Query Parameters
+     * @param {Object} queryParams - req.query
+     * @returns {Object} { products, currentCategory, filterMeta }
+     */
+    async filterProducts(queryParams) {
+        let filter = {};
+        let currentCategory = null;
 
-    // Cache for 1 hour
-    await cache.set(cacheKey, JSON.stringify(result), 3600);
+        // 1. Search Logic
+        if (queryParams.q) {
+            const keyword = queryParams.q.trim();
+            // Flexible fuzzy-like search: Each word must appear in any order
+            const words = keyword.split(/\s+/).filter(w => w.length > 0);
+            const regexString = words.map(w => `(?=.*${w})`).join('');
+            const regex = new RegExp(regexString, 'i');
 
-    return result;
-};
+            filter.$or = [
+                { name: { $regex: regex } },
+                { description: { $regex: regex } },
+                { brand: { $regex: regex } }
+            ];
+        }
 
-exports.getProductById = async (id) => {
-    const cacheKey = `product_${id}`;
-    const cachedData = await cache.get(cacheKey);
+        // 2. Brand Logic
+        if (queryParams.brand) {
+            filter.brand = { $regex: queryParams.brand, $options: 'i' };
+        }
 
-    if (cachedData) {
-        return JSON.parse(cachedData);
+        // 3. Gender Logic
+        if (queryParams.gender) {
+            const genderMap = {
+                'male': 'Nam',
+                'female': 'Nữ',
+                'kid': 'Trẻ em',
+                'unisex': 'Unisex'
+            };
+            const dbGender = genderMap[queryParams.gender] || queryParams.gender;
+            filter.$or = [
+                { gender: dbGender },
+                { name: { $regex: dbGender, $options: 'i' } }
+            ];
+        }
+
+        // 4. Category Logic
+        if (queryParams.cat) {
+            if (queryParams.cat.match(/^[0-9a-fA-F]{24}$/)) {
+                filter.category = queryParams.cat;
+                currentCategory = await Category.findById(queryParams.cat);
+            } else {
+                // Slug/Name magic
+                const slug = queryParams.cat;
+                let foundCat = await Category.findOne({ slug: slug });
+
+                if (!foundCat) {
+                    const looseName = slug.replace(/-/g, '.*');
+                    foundCat = await Category.findOne({ name: { $regex: looseName, $options: 'i' } });
+                }
+
+                if (foundCat) {
+                    currentCategory = foundCat;
+                    const childCats = await Category.find({ parent: foundCat._id });
+                    const allCatIds = [foundCat._id, ...childCats.map(c => c._id)];
+                    filter.category = { $in: allCatIds };
+                } else {
+                    // Force empty result if explicit category not found
+                    filter.category = '000000000000000000000000';
+                }
+            }
+        }
+
+        // 5. Build Query
+        let query = Product.find(filter).populate('category');
+
+        // 6. Sorting
+        const sort = queryParams.sort || 'latest';
+        if (sort === 'price-asc') query = query.sort({ price: 1 });
+        else if (sort === 'price-desc') query = query.sort({ price: -1 });
+        else query = query.sort({ createdAt: -1 });
+
+        const products = await query;
+        const allCategories = await Category.find(); // For sidebar
+
+        return {
+            products,
+            allCategories,
+            currentCategory,
+            searchQuery: queryParams.q || '',
+            currentGender: queryParams.gender || '',
+            currentSort: sort
+        };
     }
 
-    const product = await productRepository.findByIdWithCategory(id);
+    /**
+     * Get Product Details and increment view count
+     * @param {String} id 
+     * @returns {Object} Product document
+     */
+    async getProductById(id) {
+        const product = await Product.findById(id)
+            .populate('category')
+            .populate({
+                path: 'reviews',
+                populate: { path: 'user', select: 'name' }
+            });
 
-    if (product) {
-        await cache.set(cacheKey, JSON.stringify(product), 3600);
+        if (!product) return null;
+
+        // Increment View Count
+        product.viewCount = (product.viewCount || 0) + 1;
+        await product.save({ validateBeforeSave: false });
+
+        return product;
     }
 
-    return product;
-};
+    /**
+     * Get Products by ID List (for Recently Viewed)
+     */
+    async getProductsByIds(ids) {
+        return await Product.find({ _id: { $in: ids } });
+    }
+    // 5. Admin: Get All Products (with filters)
+    async getAllProductsAdmin(query) {
+        let filter = {};
+        if (query.q) {
+            filter.name = { $regex: query.q, $options: 'i' };
+        }
+        if (query.category) {
+            filter.category = query.category;
+        }
 
-exports.updateProduct = async (id, updateData) => {
-    // Invalidate caches
-    await cache.del(`product_${id}`);
-    await cache.del('all_products'); // Brute force clear for now
+        return await Product.find(filter).populate('category').sort('-createdAt');
+    }
 
-    return await productRepository.update(id, updateData);
-};
+    // 6. Admin: Create Product
+    async createProduct(data) {
+        return await Product.create(data);
+    }
 
-exports.deleteProduct = async (id) => {
-    // Invalidate caches
-    await cache.del(`product_${id}`);
-    await cache.del('all_products');
+    // 7. Admin: Update Product
+    async updateProduct(id, data) {
+        return await Product.findByIdAndUpdate(id, data, { new: true, runValidators: true });
+    }
 
-    return await productRepository.delete(id);
-};
+    // 8. Admin: Delete Product
+    async deleteProduct(id) {
+        return await Product.findByIdAndDelete(id);
+    }
+}
 
+module.exports = new ProductService();

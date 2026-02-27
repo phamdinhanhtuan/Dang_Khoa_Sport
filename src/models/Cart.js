@@ -19,9 +19,20 @@ const cartSchema = new mongoose.Schema({
                 min: 1
             },
             color: String,
-            size: String
+            size: String,
+            price: Number
         }
-    ]
+    ],
+    coupon: {
+        code: {
+            type: String,
+            default: null
+        },
+        discount: {
+            type: Number, // Percentage, e.g. 10 for 10%
+            default: 0
+        }
+    }
 }, {
     timestamps: true
 });

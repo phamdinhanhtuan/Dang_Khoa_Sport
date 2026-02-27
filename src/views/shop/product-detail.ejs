@@ -1,0 +1,861 @@
+<%- include('../partials/header') %>
+
+    <!-- Breadcrumb (Simple) -->
+    <nav aria-label="breadcrumb" class="mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-dark">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/products" class="text-decoration-none text-dark">Sản phẩm</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <%= product.name %>
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row mt-4">
+        <!-- LEFT: Product Images (5 Columns) -->
+        <div class="col-lg-5 mb-4">
+            <div class="card border-0 shadow-sm main-image-card position-relative">
+                <div class="zoom-container" id="mainImageContainer" style="overflow: hidden; cursor: crosshair;">
+                    <img src="<%= product.image %>" class="img-fluid rounded w-100" id="mainImage"
+                        alt="<%= product.name %>"
+                        style="object-fit: cover; min-height: 500px; transition: transform 0.1s ease-out;">
+                </div>
+                <!-- Navigation Arrows -->
+                <button
+                    class="btn btn-dark position-absolute top-50 start-0 translate-middle-y ms-2 rounded-circle opacity-75"
+                    onclick="prevImage()" style="width: 40px; height: 40px; z-index: 10;">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button
+                    class="btn btn-dark position-absolute top-50 end-0 translate-middle-y me-2 rounded-circle opacity-75"
+                    onclick="nextImage()" style="width: 40px; height: 40px; z-index: 10;">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Thumbnails List -->
+            <div class="d-flex gap-2 mt-2 overflow-auto" id="imageGallery">
+                <!-- Main Image as first thumbnail (index 0) -->
+                <img src="<%= product.image %>" class="img-thumbnail active-thumb gallery-item" data-index="0"
+                    style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; border: 2px solid var(--puma-red);"
+                    onclick="changeMainImage(this.src, this, 0)">
+
+                <!-- Additional Images -->
+                <% if(product.images && product.images.length> 0) { %>
+                    <% product.images.forEach(function(img, index) { %>
+                        <img src="<%= img %>" class="img-thumbnail gallery-item" data-index="<%= index + 1 %>"
+                            style="width: 80px; height: 80px; object-fit: cover; cursor: pointer; opacity: 0.6;"
+                            onclick="changeMainImage(this.src, this, <%= index + 1 %>)">
+                        <% }) %>
+                            <% } %>
+            </div>
+
+            <script>
+                let currentIndex = 0;
+
+                function getAllImages() {
+                    return document.querySelectorAll('.gallery-item');
+                }
+
+                function updateView(index) {
+                    const images = getAllImages();
+                    // Wrap around
+                    if (index < 0) index = images.length - 1;
+                    if (index >= images.length) index = 0;
+
+                    currentIndex = index;
+                    const selectedThumb = images[currentIndex];
+
+                    // Update Main Image
+                    const mainImage = document.getElementById('mainImage');
+                    // Add fade effect
+                    mainImage.style.opacity = '0.5';
+                    setTimeout(() => {
+                        mainImage.src = selectedThumb.src;
+                        mainImage.style.opacity = '1';
+                    }, 100);
+
+                    // Update Styling for all thumbs
+                    images.forEach(img => {
+                        img.style.borderColor = '#dee2e6';
+                        img.style.opacity = '0.6';
+                        img.classList.remove('active-thumb');
+                    });
+
+                    // Highlight selected
+                    selectedThumb.style.borderColor = '#dc3545';
+                    selectedThumb.style.opacity = '1';
+                    selectedThumb.classList.add('active-thumb');
+
+                    // Scroll thumbnail into view
+                    selectedThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+
+                function changeMainImage(src, thumb, index) {
+                    updateView(index);
+                }
+
+                function nextImage() {
+                    updateView(currentIndex + 1);
+                }
+
+                function prevImage() {
+                    updateView(currentIndex - 1);
+                }
+            </script>
+        </div>
+
+        <!-- CENTER: Product Info (4 Columns) -->
+        <div class="col-lg-4 mb-4">
+            <h1 class="fw-bold mb-2" style="font-size: 1.75rem;">
+                <%= product.name %>
+            </h1>
+
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="text-warning small">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i
+                        class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <small class="text-muted border-start ps-2">Mã SP: <%=
+                        product._id.toString().substring(0,8).toUpperCase() %></small>
+                <small class="text-muted border-start ps-2">Thương hiệu: <strong class="text-dark">
+                        <%= product.category ? product.category.name : 'PUMA' %>
+                    </strong></small>
+            </div>
+
+            <div class="mb-3">
+                <% if (product.discountPrice) { %>
+                    <h2 class="text-danger fw-bold mb-0 d-flex align-items-center">
+                        <%= product.discountPrice.toLocaleString('vi-VN') %>₫
+                            <span class="text-muted text-decoration-line-through ms-3 fs-5 fw-normal">
+                                <%= product.price.toLocaleString('vi-VN') %>₫
+                            </span>
+                            <span class="badge bg-danger ms-3 fs-6">
+                                -<%= Math.round(((product.price - product.discountPrice) / product.price) * 100) %>%
+                            </span>
+                    </h2>
+                    <% } else { %>
+                        <h2 class="text-danger fw-bold mb-0">
+                            <%= product.price.toLocaleString('vi-VN') %>₫
+                        </h2>
+                        <% } %>
+            </div>
+
+            <!-- Size Selector Logic -->
+            <% let showSize=false; let sizeType='none' ; if(product.category && product.category.name) { const
+                catName=product.category.name.toLowerCase(); if(catName.includes('giày') || catName.includes('sneaker'))
+                { showSize=true; sizeType='number' ; } else if(catName.includes('áo') || catName.includes('quần') ||
+                catName.includes('bộ')) { showSize=true; sizeType='letter' ; } } %>
+
+                <form action="/cart/add" method="POST" class="mt-4">
+                    <input type="hidden" name="productId" value="<%= product._id %>">
+
+                    <% if(showSize) { %>
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="fw-bold">Chọn Kích thước:</label>
+                                <a href="#" class="text-decoration-none small text-primary" data-bs-toggle="modal"
+                                    data-bs-target="#sizeGuideModal">
+                                    <i class="fas fa-ruler-horizontal"></i> Bảng tính size
+                                </a>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <% if(sizeType==='number' ) { %>
+                                    <% [36, 37, 38, 39, 40, 41, 42, 43, 44].forEach(function(s) { %>
+                                        <input type="radio" class="btn-check" name="size" id="size<%= s %>"
+                                            value="<%= s %>" autocomplete="off" <%=s===40 ? 'checked' : '' %>>
+                                        <label class="btn btn-outline-dark rounded-0 px-3 py-2" for="size<%= s %>">
+                                            <%= s %>
+                                        </label>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <% ['S', 'M' , 'L' , 'XL' , 'XXL' ].forEach(function(s) { %>
+                                                    <input type="radio" class="btn-check" name="size" id="size<%= s %>"
+                                                        value="<%= s %>" autocomplete="off" <%=s==='L' ? 'checked' : ''
+                                                        %>>
+                                                    <label class="btn btn-outline-dark rounded-0 px-3 py-2"
+                                                        for="size<%= s %>">
+                                                        <%= s %>
+                                                    </label>
+                                                    <% }) %>
+                                                        <% } %>
+                            </div>
+                        </div>
+                        <% } %>
+
+                            <div class="mb-4">
+                                <label class="fw-bold mb-2">Số lượng:</label>
+                                <div class="input-group" style="width: 140px;">
+                                    <button class="btn btn-outline-secondary rounded-0" type="button"
+                                        onclick="this.parentNode.querySelector('input[type=number]').stepDown()">-</button>
+                                    <input type="number" name="quantity"
+                                        class="form-control text-center border-secondary" value="1" min="1"
+                                        max="<%= product.stock %>">
+                                    <button class="btn btn-outline-secondary rounded-0" type="button"
+                                        onclick="this.parentNode.querySelector('input[type=number]').stepUp()">+</button>
+                                </div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit"
+                                    class="btn btn-danger btn-lg rounded-0 fw-bold text-uppercase py-3"
+                                    <%=product.stock===0 ? 'disabled' : '' %>>
+                                    <i class="fas fa-shopping-bag me-2"></i> THÊM VÀO GIỎ HÀNG
+                                </button>
+                                <button type="button"
+                                    class="btn btn-outline-dark btn-lg rounded-0 fw-bold text-uppercase"
+                                    onclick="document.querySelector('footer').scrollIntoView({behavior: 'smooth'})">
+                                    <i class="fas fa-map-marker-alt me-2"></i> TÌM TẠI CỬA HÀNG
+                                </button>
+                            </div>
+                </form>
+        </div>
+
+        <!-- RIGHT: Policy Sidebar (3 Columns) -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm mb-3">
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-shipping-fast text-primary fa-lg me-3 mt-1"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Vận chuyển hỏa tốc</h6>
+                                <p class="small text-muted mb-0">Nhận hàng trong 2-4 giờ tại nội thành</p>
+                            </div>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-sync-alt text-success fa-lg me-3 mt-1"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Đổi trả dễ dàng</h6>
+                                <p class="small text-muted mb-0">Hỗ trợ đổi size/mẫu trong 5 ngày</p>
+                            </div>
+                        </li>
+                        <li class="mb-3 d-flex align-items-start">
+                            <i class="fas fa-gift text-danger fa-lg me-3 mt-1"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Quà tặng hấp dẫn</h6>
+                                <p class="small text-muted mb-0">Cho đơn hàng từ 1.200.000đ</p>
+                            </div>
+                        </li>
+                        <li class="d-flex align-items-start">
+                            <i class="fas fa-shield-alt text-warning fa-lg me-3 mt-1"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Bảo mật thông tin</h6>
+                                <p class="small text-muted mb-0">Cam kết bảo mật tuyệt đối</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Social Share -->
+            <div class="card border-0 shadow-sm p-3">
+                <p class="fw-bold mb-2 small text-uppercase">Chia sẻ sản phẩm:</p>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-sm rounded-circle"><i class="fab fa-facebook-f"></i></button>
+                    <button class="btn btn-info btn-sm rounded-circle text-white"><i
+                            class="fab fa-twitter"></i></button>
+                    <button class="btn btn-danger btn-sm rounded-circle"><i class="fab fa-pinterest-p"></i></button>
+                    <button class="btn btn-success btn-sm rounded-circle"><i class="far fa-copy"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Description & Policies Accordion (Replaces Tabs) -->
+    <div class="row mt-5 justify-content-center">
+        <div class="col-lg-12">
+            <div class="accordion accordion-flush" id="productAccordion">
+
+                <!-- DESCRIPTION ITEM -->
+                <div class="accordion-item border-bottom">
+                    <h2 class="accordion-header" id="headingDesc">
+                        <button
+                            class="accordion-button fw-bold text-uppercase bg-transparent shadow-none py-4 text-dark"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#collapseDesc" aria-expanded="true"
+                            aria-controls="collapseDesc" style="font-size: 1.1rem;">
+                            Mô tả sản phẩm
+                        </button>
+                    </h2>
+                    <div id="collapseDesc" class="accordion-collapse collapse show" aria-labelledby="headingDesc"
+                        data-bs-parent="#productAccordion">
+                        <div class="accordion-body text-muted lh-lg">
+                            <p class="mb-3 fw-bold text-dark">
+                                <%= product.name %>
+                            </p>
+                            <div class="product-description-content">
+                                <% if (product.description) { %>
+                                    <%- product.description.replace(/\r\n/g, '<br>' ).replace(/\n/g, '<br>' ) %>
+                                        <% } else { %>
+                                            <p class="text-muted">Chưa có mô tả cho sản phẩm này.</p>
+                                            <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SHIPPING & RETURN ITEM -->
+                <div class="accordion-item border-bottom">
+                    <h2 class="accordion-header" id="headingShip">
+                        <button
+                            class="accordion-button collapsed fw-bold text-uppercase bg-transparent shadow-none py-4 text-dark"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#collapseShip" aria-expanded="false"
+                            aria-controls="collapseShip" style="font-size: 1.1rem;">
+                            Miễn phí vận chuyển và trả hàng
+                        </button>
+                    </h2>
+                    <div id="collapseShip" class="accordion-collapse collapse" aria-labelledby="headingShip"
+                        data-bs-parent="#productAccordion">
+                        <div class="accordion-body text-muted lh-lg">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-truck text-dark me-3 mt-1"></i>
+                                <div>
+                                    <strong>Giao hàng tiêu chuẩn miễn phí</strong><br>
+                                    Cho tất cả đơn hàng trên 1.200.000₫. Thời gian giao hàng từ 2-4 ngày làm việc.
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="fas fa-box-open text-dark me-3 mt-1"></i>
+                                <div>
+                                    <strong>Trả hàng miễn phí trong 30 ngày</strong><br>
+                                    Không vừa ý? Không sao cả. Bạn có thể trả hàng miễn phí trong vòng 30 ngày (trừ
+                                    đồ
+                                    lót và tất).
+                                </div>
+                            </div>
+                            <div class="alert alert-light border small">
+                                * Áp dụng cho các đơn hàng nội địa. Vui lòng kiểm tra kỹ chính sách đổi trả để biết
+                                thêm
+                                chi tiết.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WARRANTY ITEM -->
+                <div class="accordion-item border-bottom">
+                    <h2 class="accordion-header" id="headingWarranty">
+                        <button
+                            class="accordion-button collapsed fw-bold text-uppercase bg-transparent shadow-none py-4 text-dark"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#collapseWarranty"
+                            aria-expanded="false" aria-controls="collapseWarranty" style="font-size: 1.1rem;">
+                            Chính sách bảo hành
+                        </button>
+                    </h2>
+                    <div id="collapseWarranty" class="accordion-collapse collapse" aria-labelledby="headingWarranty"
+                        data-bs-parent="#productAccordion">
+                        <div class="accordion-body text-muted">
+                            <p>Bảo hành chính hãng 12 tháng tại các trung tâm bảo hành trên toàn quốc.</p>
+                            <ul>
+                                <li>Đổi mới trong 7 ngày nếu lỗi nhà sản xuất</li>
+                                <li>Bảo hành keo, chỉ trọn đời (đối với giày)</li>
+                                <li>Hỗ trợ sửa chữa miễn phí</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ZOOM SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('mainImageContainer');
+            const img = document.getElementById('mainImage');
+
+            container.addEventListener('mousemove', function (e) {
+                const { left, top, width, height } = container.getBoundingClientRect();
+                const x = e.clientX - left;
+                const y = e.clientY - top;
+
+                // Move origin with cursor
+                const xPercent = (x / width) * 100;
+                const yPercent = (y / height) * 100;
+
+                img.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+                img.style.transform = 'scale(2)'; // Zoom Ratio
+            });
+
+            container.addEventListener('mouseleave', function () {
+                img.style.transform = 'scale(1)';
+                setTimeout(() => {
+                    img.style.transformOrigin = 'center center';
+                }, 100);
+            });
+        });
+    </script>
+
+    <hr class="my-5">
+
+    <!-- RELATED PRODUCTS -->
+    <!-- RELATED PRODUCTS CAROUSEL -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                <h4 class="fw-bold text-uppercase m-0">
+                    <i class="fas fa-tshirt text-danger me-2"></i> Sản phẩm liên quan
+                    <span class="text-danger fw-bold ms-1" style="font-size: 2rem; line-height: 0;">_</span>
+                </h4>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary rounded-0 btn-sm"
+                        onclick="scrollContainer('related-scroll', -200)"><i class="fas fa-chevron-left"></i></button>
+                    <button class="btn btn-danger rounded-0 btn-sm" onclick="scrollContainer('related-scroll', 200)"><i
+                            class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="scrolling-wrapper row flex-row flex-nowrap pb-4 pt-2" id="related-scroll"
+                style="overflow-x: auto; scroll-behavior: smooth;">
+                <% relatedProducts.forEach(function(p) { %>
+                    <div class="col-6 col-md-4 col-lg-3 mb-3">
+                        <div
+                            class="product-card-wrap border rounded-3 p-3 h-100 position-relative bg-white shadow-sm hover-shadow transition-all">
+                            <!-- Image & Overlay -->
+                            <div class="position-relative overflow-hidden group-hover-overlay rounded">
+                                <img src="<%= p.image %>" class="w-100 mb-3 rounded"
+                                    style="aspect-ratio: 1/1; object-fit: cover;">
+
+                                <!-- Hover Actions (Hidden by default, show on hover) -->
+                                <div
+                                    class="overlay-actions position-absolute top-50 start-50 translate-middle d-flex flex-column gap-2 opacity-0 transition-opacity">
+                                    <a href="/products/<%= p._id %>"
+                                        class="btn btn-danger rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                                        style="width: 40px; height: 40px;" title="Xem nhanh">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button
+                                        class="btn btn-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center"
+                                        style="width: 40px; height: 40px;" title="Yêu thích">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="product-info">
+                                <h6 class="product-title fw-bold text-dark text-truncate-2 mb-2"
+                                    style="height: 2.5em; overflow: hidden; font-size: 0.95rem;">
+                                    <a href="/products/<%= p._id %>" class="text-decoration-none text-dark">
+                                        <%= p.name %>
+                                    </a>
+                                </h6>
+                                <div class="d-flex justify-content-between align-items-end">
+                                    <div>
+                                        <div class="text-danger fw-bold fs-5 mb-0">
+                                            <%= p.price.toLocaleString('vi-VN') %>đ
+                                        </div>
+                                        <small class="text-muted text-decoration-line-through">
+                                            <%= (p.price * 1.1).toLocaleString('vi-VN') %>đ
+                                        </small>
+                                    </div>
+                                    <a href="/products/<%= p._id %>"
+                                        class="btn btn-danger rounded-circle btn-sm d-flex align-items-center justify-content-center shadow-sm"
+                                        style="width: 35px; height: 35px;">
+                                        <i class="fas fa-arrow-right text-white"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+        </div>
+    </div>
+
+    <!-- RECENTLY VIEWED CAROUSEL -->
+    <% if(typeof recentlyViewedProducts !=='undefined' && recentlyViewedProducts.length> 0) { %>
+        <div class="row mt-5 mb-5">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                    <h4 class="fw-bold text-uppercase m-0">
+                        <i class="fas fa-history text-danger me-2"></i> Sản phẩm đã xem
+                        <span class="text-danger fw-bold ms-1" style="font-size: 2rem; line-height: 0;">_</span>
+                    </h4>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary rounded-0 btn-sm"
+                            onclick="scrollContainer('recent-scroll', -200)"><i
+                                class="fas fa-chevron-left"></i></button>
+                        <button class="btn btn-danger rounded-0 btn-sm"
+                            onclick="scrollContainer('recent-scroll', 200)"><i
+                                class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="scrolling-wrapper row flex-row flex-nowrap pb-4 pt-2" id="recent-scroll"
+                    style="overflow-x: auto; scroll-behavior: smooth;">
+                    <% recentlyViewedProducts.forEach(function(p) { %>
+                        <div class="col-6 col-md-3 col-lg-2 mb-3">
+                            <div
+                                class="product-card-wrap border rounded-3 p-2 h-100 position-relative bg-white shadow-sm hover-shadow transition-all">
+                                <div class="position-relative overflow-hidden group-hover-overlay rounded">
+                                    <img src="<%= p.image %>" class="w-100 mb-2 rounded"
+                                        style="aspect-ratio: 1/1; object-fit: cover;">
+                                    <div
+                                        class="overlay-actions position-absolute top-50 start-50 translate-middle d-flex flex-column gap-2 opacity-0 transition-opacity">
+                                        <a href="/products/<%= p._id %>"
+                                            class="btn btn-danger btn-sm rounded-circle shadow-sm"><i
+                                                class="fas fa-eye"></i></a>
+                                    </div>
+                                </div>
+                                <h6 class="product-title text-truncate small mb-1">
+                                    <a href="/products/<%= p._id %>" class="text-decoration-none text-dark">
+                                        <%= p.name %>
+                                    </a>
+                                </h6>
+                                <div class="text-danger fw-bold small">
+                                    <%= p.price.toLocaleString('vi-VN') %>đ
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                </div>
+            </div>
+        </div>
+        <% } %>
+
+            <!-- Custom CSS & JS for this Section -->
+            <style>
+                .scrolling-wrapper::-webkit-scrollbar {
+                    height: 6px;
+                }
+
+                .scrolling-wrapper::-webkit-scrollbar-track {
+                    background: #f1f1f1;
+                }
+
+                .scrolling-wrapper::-webkit-scrollbar-thumb {
+                    background: #888;
+                    border-radius: 3px;
+                }
+
+                .scrolling-wrapper::-webkit-scrollbar-thumb:hover {
+                    background: #555;
+                }
+
+                .hover-shadow:hover {
+                    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+                    transform: translateY(-5px);
+                }
+
+                .transition-all {
+                    transition: all 0.3s ease;
+                }
+
+                .group-hover-overlay:hover .overlay-actions {
+                    opacity: 1 !important;
+                }
+
+                .text-truncate-2 {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+            </style>
+            <script>
+                function scrollContainer(id, amount) {
+                    const container = document.getElementById(id);
+                    container.scrollLeft += amount;
+                }
+            </script>
+
+            <!-- Size Guide Modal -->
+            <div class="modal fade" id="sizeGuideModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content border-0 shadow-lg">
+                        <div class="modal-header border-bottom-0 pb-0">
+                            <h5 class="modal-title fw-bold text-uppercase mx-auto">Bảng Hướng Dẫn Kích Cỡ</h5>
+                            <button type="button" class="btn-close m-0" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-4 pt-2">
+                            <style>
+                                /* OVERRIDE GLOBAL NAV-LINK STYLES FOR THIS MODAL */
+                                #sizeGuideModal .nav-pills .nav-link {
+                                    color: #333 !important;
+                                    /* Dark text for inactive tabs */
+                                    padding: 10px 20px !important;
+                                    border: 1px solid #ddd;
+                                }
+
+                                #sizeGuideModal .nav-pills .nav-link.active {
+                                    color: #fff !important;
+                                    /* White text for active tab */
+                                    background-color: #0d6efd !important;
+                                    /* Bootstrap Primary Blue */
+                                    border-color: #0d6efd;
+                                }
+                            </style>
+                            <p class="text-center text-muted mb-4 small">Sử dụng bảng dưới đây để xác định kích cỡ
+                                chính
+                                xác của bạn.</p>
+
+                            <ul class="nav nav-pills nav-fill mb-4 p-1 border rounded-pill bg-light" id="pills-tab"
+                                role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active rounded-pill fw-bold text-uppercase"
+                                        id="pills-shoes-tab" data-bs-toggle="pill" data-bs-target="#pills-shoes"
+                                        type="button" role="tab">Giày Dép</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link rounded-pill fw-bold text-uppercase" id="pills-clothes-tab"
+                                        data-bs-toggle="pill" data-bs-target="#pills-clothes" type="button"
+                                        role="tab">Quần Áo</button>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="pills-tabContent">
+                                <!-- SHOES TAB -->
+                                <div class="tab-pane fade show active" id="pills-shoes" role="tabpanel">
+                                    <h6 class="fw-bold mb-3 border-start border-4 border-danger ps-2">Bảng Quy Đổi
+                                        Size
+                                        Quốc Tế</h6>
+                                    <div class="table-responsive mb-4">
+                                        <table
+                                            class="table table-hover table-striped text-center align-middle font-monospace small">
+                                            <thead class="bg-dark text-white">
+                                                <tr>
+                                                    <th>VN/EU</th>
+                                                    <th>UK</th>
+                                                    <th>US (Men)</th>
+                                                    <th>US (Women)</th>
+                                                    <th>CM</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>35.5</td>
+                                                    <td>3</td>
+                                                    <td>4</td>
+                                                    <td>5.5</td>
+                                                    <td>22</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>36</td>
+                                                    <td>3.5</td>
+                                                    <td>4.5</td>
+                                                    <td>6</td>
+                                                    <td>22.5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>37</td>
+                                                    <td>4</td>
+                                                    <td>5</td>
+                                                    <td>6.5</td>
+                                                    <td>23</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>37.5</td>
+                                                    <td>4.5</td>
+                                                    <td>5.5</td>
+                                                    <td>7</td>
+                                                    <td>23.5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>38</td>
+                                                    <td>5</td>
+                                                    <td>6</td>
+                                                    <td>7.5</td>
+                                                    <td>24</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>38.5</td>
+                                                    <td>5.5</td>
+                                                    <td>6.5</td>
+                                                    <td>8</td>
+                                                    <td>24.5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>39</td>
+                                                    <td>6</td>
+                                                    <td>7</td>
+                                                    <td>8.5</td>
+                                                    <td>25</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>40</td>
+                                                    <td>6.5</td>
+                                                    <td>7.5</td>
+                                                    <td>9</td>
+                                                    <td>25.5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>40.5</td>
+                                                    <td>7</td>
+                                                    <td>8</td>
+                                                    <td>9.5</td>
+                                                    <td>26</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>41</td>
+                                                    <td>7.5</td>
+                                                    <td>8.5</td>
+                                                    <td>10</td>
+                                                    <td>26.5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>42</td>
+                                                    <td>8</td>
+                                                    <td>9</td>
+                                                    <td>10.5</td>
+                                                    <td>27</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>42.5</td>
+                                                    <td>8.5</td>
+                                                    <td>9.5</td>
+                                                    <td>11</td>
+                                                    <td>27.5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>43</td>
+                                                    <td>9</td>
+                                                    <td>10</td>
+                                                    <td>11.5</td>
+                                                    <td>28</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>44</td>
+                                                    <td>9.5</td>
+                                                    <td>10.5</td>
+                                                    <td>12</td>
+                                                    <td>28.5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>44.5</td>
+                                                    <td>10</td>
+                                                    <td>11</td>
+                                                    <td>12.5</td>
+                                                    <td>29</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>45</td>
+                                                    <td>10.5</td>
+                                                    <td>11.5</td>
+                                                    <td>13</td>
+                                                    <td>29.5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>46</td>
+                                                    <td>11</td>
+                                                    <td>12</td>
+                                                    <td>13.5</td>
+                                                    <td>30</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <h6 class="fw-bold mb-3 border-start border-4 border-danger ps-2">Cách Đo Chân
+                                    </h6>
+                                    <div class="alert alert-secondary d-flex align-items-center">
+                                        <i class="fas fa-ruler-combined fa-2x me-3 text-secondary"></i>
+                                        <div>
+                                            <small>Đặt bàn chân lên tờ giấy trắng, đánh dấu điểm gót chân và ngón
+                                                chân
+                                                dài nhất. Đo khoảng cách giữa hai điểm để có chiều dài chân
+                                                (CM).</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- CLOTHES TAB -->
+                                <div class="tab-pane fade" id="pills-clothes" role="tabpanel">
+                                    <h6 class="fw-bold mb-3 border-start border-4 border-danger ps-2">Bảng Size Quần
+                                        Áo
+                                        (Nam/Nữ)</h6>
+                                    <div class="table-responsive mb-4">
+                                        <table class="table table-hover table-bordered text-center align-middle small">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th>Size</th>
+                                                    <th>Chiều Cao (m)</th>
+                                                    <th>Cân Nặng (kg)</th>
+                                                    <th>Ngực (cm)</th>
+                                                    <th>Eo (cm)</th>
+                                                    <th>Mông (cm)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="fw-bold">XS</td>
+                                                    <td>1.50 - 1.60</td>
+                                                    <td>40 - 50</td>
+                                                    <td>78 - 82</td>
+                                                    <td>64 - 68</td>
+                                                    <td>86 - 90</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold">S</td>
+                                                    <td>1.60 - 1.65</td>
+                                                    <td>50 - 60</td>
+                                                    <td>82 - 86</td>
+                                                    <td>68 - 72</td>
+                                                    <td>90 - 94</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold">M</td>
+                                                    <td>1.65 - 1.70</td>
+                                                    <td>60 - 70</td>
+                                                    <td>86 - 90</td>
+                                                    <td>72 - 76</td>
+                                                    <td>94 - 98</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold">L</td>
+                                                    <td>1.70 - 1.75</td>
+                                                    <td>70 - 78</td>
+                                                    <td>90 - 94</td>
+                                                    <td>76 - 80</td>
+                                                    <td>98 - 102</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold">XL</td>
+                                                    <td>1.75 - 1.80</td>
+                                                    <td>78 - 85</td>
+                                                    <td>94 - 98</td>
+                                                    <td>80 - 84</td>
+                                                    <td>102 - 106</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="fw-bold">XXL</td>
+                                                    <td>1.80 - 1.85</td>
+                                                    <td>85 - 95</td>
+                                                    <td>98 - 102</td>
+                                                    <td>84 - 88</td>
+                                                    <td>106 - 110</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <h6 class="fw-bold mb-3 border-start border-4 border-danger ps-2">Hướng Dẫn Đo
+                                    </h6>
+                                    <div class="row g-3 small text-muted">
+                                        <div class="col-sm-4">
+                                            <strong class="text-dark">1. Vòng ngực:</strong> Đo quanh phần nảy nở
+                                            nhất
+                                            của ngực.
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <strong class="text-dark">2. Vòng eo:</strong> Đo quanh phần nhỏ nhất
+                                            của
+                                            eo.
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <strong class="text-dark">3. Vòng mông:</strong> Đo quanh phần nảy nở
+                                            nhất
+                                            của mông.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%- include('../partials/footer') %>

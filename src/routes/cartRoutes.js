@@ -6,14 +6,12 @@ const router = express.Router();
 
 // router.use(isLoggedIn);
 
-router.route('/')
-    .get(cartController.getCart)
-    .post(cartController.addToCart);
+router.post('/add', cartController.addToCart); // Explicit add route if needed, usually / is fine but /add is clearer
+router.post('/update', cartController.updateCartItem);
+router.post('/remove', cartController.removeFromCart);
 
-router.delete('/clear', cartController.clearCart);
+router.get('/', cartController.getCart);
+// router.post('/', cartController.addToCart); // Keep compat if needed
 
-router.route('/:productId')
-    .put(cartController.updateCartItem)
-    .delete(cartController.removeFromCart);
 
 module.exports = router;

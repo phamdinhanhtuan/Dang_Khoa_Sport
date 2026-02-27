@@ -1,0 +1,183 @@
+<%- include('partials/header') %>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>
+            <%= title %>
+        </h3>
+        <a href="/admin/products" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body p-4">
+                    <form action="<%= product._id ? '/admin/products/' + product._id : '/admin/products' %>"
+                        method="POST" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label class="form-label">Product Name</label>
+                            <input type="text" name="name" class="form-control" value="<%= product.name || '' %>"
+                                required>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Category</label>
+                                <select name="category" class="form-select">
+                                    <option value="">Select Category</option>
+                                    <% /* 1. Filter parents (categories with no parent) */ const
+                                        parents=categories.filter(c=> !c.parent);
+                                        /* 2. Filter children (categories with a parent) */
+                                        const children = categories.filter(c => c.parent);
+
+                                        parents.forEach(function(parent) {
+                                        %>
+                                        <option value="<%= parent._id %>" class="fw-bold bg-light" <%=(product.category
+                                            && product.category.toString()===parent._id.toString()) ? 'selected' : '' %>
+                                            >
+                                            <%= parent.name %>
+                                        </option>
+
+                                        <% /* Find children of this parent */ const myChildren=children.filter(c=>
+                                            c.parent && c.parent._id.toString() === parent._id.toString());
+                                            myChildren.forEach(function(child) {
+                                            %>
+                                            <option value="<%= child._id %>" <%=(product.category &&
+                                                product.category.toString()===child._id.toString()) ? 'selected' : '' %>
+                                                >
+                                                &nbsp;&nbsp;&nbsp;-- <%= child.name %>
+                                            </option>
+                                            <% }); %>
+                                                <% }); %>
+
+                                                    <% /* 3. Find Orphans */ const orphans=categories.filter(c=>
+                                                        c.parent && !parents.find(p => p._id.toString() ===
+                                                        c.parent._id.toString()));
+                                                        if (orphans.length > 0) {
+                                                        %>
+                                                        <option disabled>--- Uncategorized ---</option>
+                                                        <% orphans.forEach(function(orphan) { %>
+                                                            <option value="<%= orphan._id %>" <%=(product.category &&
+                                                                product.category.toString()===orphan._id.toString())
+                                                                ? 'selected' : '' %>>
+                                                                <%= orphan.name %>
+                                                            </option>
+                                                            <% }); %>
+                                                                <% } %>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Original Price (VND)</label>
+                                <input type="number" name="price" id="originalPrice" class="form-control"
+                                    value="<%= product.price || '' %>" required min="0">
+                            </div>
+                            <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">Giảm (%)</label>
+                                        <input type="number" id="discountPercent"
+                                            class="form-control text-danger fw-bold" placeholder="Ex: 20" min="0"
+                                            max="99">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">Giá H.tại</label>
+                                        <input type="number" name="discountPrice" id="discountPrice"
+                                            class="form-control fw-bold" value="<%= product.discountPrice || '' %>"
+                                            placeholder="Auto">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+
+                <script>
+                    const originalInput = document.getElementById('originalPrice');
+                    const percentInput = document.getElementById('discountPercent');
+                    const discountPriceInput = document.getElementById('discountPrice');
+
+                    function calcPrice() {
+                        const price = parseFloat(originalInput.value) || 0;
+                        const percent = parseFloat(percentInput.value) || 0;
+                        if (price > 0 && percent > 0) {
+                            const sale = price * (1 - percent / 100);
+                            discountPriceInput.value = Math.round(sale);
+                        } else if (percent === 0) {
+                            discountPriceInput.value = ''; // No discount
+                        }
+                    }
+
+                    function calcPercent() {
+                        const price = parseFloat(originalInput.value) || 0;
+                        const sale = parseFloat(discountPriceInput.value) || 0;
+                        if (price > 0 && sale > 0 && sale < price) {
+                            const percent = ((price - sale) / price) * 100;
+                            percentInput.value = Math.round(percent);
+                        } else {
+                            percentInput.value = '';
+                        }
+                    }
+
+                    // Init percentage on load
+                    if (originalInput.value && discountPriceInput.value) {
+                        calcPercent();
+                    }
+
+                    // Events
+                    originalInput.addEventListener('input', () => {
+                        if (percentInput.value) calcPrice(); // Keep percent, update price
+                    });
+                    percentInput.addEventListener('input', calcPrice);
+                    discountPriceInput.addEventListener('input', calcPercent);
+                </script>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Stock Quantity</label>
+                        <input type="number" name="stock" class="form-control" value="<%= product.stock || 0 %>"
+                            required min="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Product Image</label>
+                        <input type="file" name="image" class="form-control" accept="image/*">
+                        <small class="text-muted">Upload from device (Main)</small>
+                        <input type="text" name="imageUrl" class="form-control mt-2" value="<%= product.image || '' %>"
+                            placeholder="Main Image URL (https://...)">
+
+                        <label class="form-label mt-3 fw-bold">Upload Gallery Images</label>
+                        <input type="file" name="galleryImages" class="form-control" accept="image/*" multiple>
+                        <small class="text-muted">Select multiple files to add to gallery.</small>
+
+                        <!-- Hidden field to keep existing images -->
+                        <input type="hidden" name="existingImages"
+                            value="<%= product.images ? product.images.join(',') : '' %>">
+
+                        <!-- Helper text -->
+                        <small class="text-muted mt-2 d-block">
+                            Current Gallery: <strong>
+                                <%= product.images ? product.images.length : 0 %>
+                            </strong> images.
+                            New uploads will be added to the list.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control"
+                        rows="5"><%= product.description || '' %></textarea>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <%= product._id ? 'Update Product' : 'Create Product' %>
+                    </button>
+                </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <%- include('partials/footer') %>

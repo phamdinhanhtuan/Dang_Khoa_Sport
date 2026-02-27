@@ -1,9 +1,9 @@
 const request = require('supertest');
 const app = require('../../src/app');
 const mongoose = require('mongoose');
-const User = require('../../src/models/userModel');
-const Product = require('../../src/models/productModel');
-const Cart = require('../../src/models/cartModel');
+const User = require('../../src/models/User');
+const Product = require('../../src/models/Product');
+const Cart = require('../../src/models/Cart');
 const jwt = require('jsonwebtoken');
 
 describe('Cart Routes Integration', () => {

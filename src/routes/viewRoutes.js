@@ -1,29 +1,43 @@
 const express = require('express');
-const viewController = require('../controllers/viewController');
-const productController = require('../controllers/productController');
-const { protect, restrictTo } = require('../middleware/auth'); // Updated
-
 const router = express.Router();
+const productController = require('../controllers/productController');
+const cartController = require('../controllers/cartController');
+const orderController = require('../controllers/orderController');
+const authController = require('../controllers/authController');
+const { protect } = require('../middleware/auth');
 
-router.get('/', viewController.getHome);
-router.get('/shop', viewController.getShop);
-router.get('/orders/success', protect, viewController.getOrderSuccess);
-router.get('/product/:id', viewController.getProductDetail);
-router.get('/login', viewController.getLogin);
-router.get('/signup', viewController.getSignup);
-router.get('/checkout', protect, viewController.getCheckout);
-router.get('/wishlist', protect, viewController.getWishlist);
-
+// --- SHARED ROUTES ---
 router.get('/lang/:locale', (req, res) => {
     const { locale } = req.params;
     res.cookie('lang', locale, { maxAge: 900000, httpOnly: true });
     res.redirect(req.get('Referer') || '/');
 });
 
-// Admin Routes (View based)
-router.get('/admin', protect, restrictTo('admin'), viewController.getAdminDashboard);
-router.get('/admin/products', protect, restrictTo('admin'), viewController.getAdminProducts);
-router.get('/admin/products/add', protect, restrictTo('admin'), productController.getAdminProductForm);
-router.get('/admin/products/edit/:id', protect, restrictTo('admin'), productController.getAdminEditProductForm);
+// --- AUTH ---
+router.get('/login', authController.getLoginForm);
+router.post('/login', authController.login);
+router.get('/signup', authController.getSignupForm); // Corrected from /register
+router.post('/signup', authController.signup);
+router.get('/logout', authController.logout);
+
+// --- PUBLIC SHOP UI ---
+router.get('/', productController.getHomePage);
+router.get('/products', productController.getProducts);
+router.get('/products/:id', productController.getProductDetail);
+
+// --- PROTECTED SHOP UI ---
+// Cart (View & Actions)
+router.get('/cart', protect, cartController.getCart);
+router.post('/cart/add', protect, cartController.addToCart);
+router.post('/cart/remove', protect, cartController.removeFromCart);
+router.post('/cart/apply-coupon', protect, cartController.applyCoupon); // Added Coupon Route
+
+// Checkout
+router.get('/checkout', protect, orderController.getCheckout);
+router.post('/checkout', protect, orderController.postCheckout);
+
+// Orders
+router.get('/orders', protect, orderController.getMyOrders);
+router.get('/orders/:id', protect, orderController.getOrderDetail);
 
 module.exports = router;

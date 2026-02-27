@@ -1,8 +1,8 @@
 const request = require('supertest');
 const app = require('../../src/app');
-const Product = require('../../src/models/productModel');
+const Product = require('../../src/models/Product');
 const Category = require('../../src/models/categoryModel');
-const User = require('../../src/models/userModel');
+const User = require('../../src/models/User');
 const jwt = require('jsonwebtoken');
 
 describe('Product Routes Integration', () => {

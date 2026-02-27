@@ -1,0 +1,246 @@
+<%- include('../partials/header') %>
+
+    <% var currentCat=(typeof currentCat !=='undefined' ) ? currentCat : '' ; %>
+        <% var currentGender=(typeof currentGender !=='undefined' ) ? currentGender : '' ; %>
+            <% var currentBrand=(typeof currentBrand !=='undefined' ) ? currentBrand : '' ; %>
+                <% var searchQuery=(typeof searchQuery !=='undefined' ) ? searchQuery : '' ; %>
+                    <% var currentSort=(typeof currentSort !=='undefined' ) ? currentSort : 'latest' ; %>
+                        <% var categories=(typeof categories !=='undefined' ) ? categories : []; %>
+
+                            <% var paramsList=[]; if (searchQuery) paramsList.push('q=' + encodeURIComponent(searchQuery));
+if (currentCat) paramsList.push(' cat=' + encodeURIComponent(currentCat));
+if (currentGender) paramsList.push(' gender=' + encodeURIComponent(currentGender));
+if (currentBrand) paramsList.push(' brand=' + encodeURIComponent(currentBrand));
+
+var baseQuery = paramsList.length > 0 ? paramsList.join(' &') + '&' : '' ; function getFilterLink(type, value) { var
+                                params=new URLSearchParams(); if (searchQuery) params.append('q', searchQuery); if
+                                (currentCat && type !=='cat' ) params.append('cat', currentCat); if (currentGender &&
+                                type !=='gender' ) params.append('gender', currentGender); if (currentBrand && type
+                                !=='brand' ) params.append('brand', currentBrand); if (value) params.append(type,
+                                value); return '/products?' + params.toString(); } %>
+
+                                <div class="container-fluid mb-5" style="margin-top: 30px;">
+                                    <div class="row px-xl-5">
+                                        <!-- Shop Sidebar Start -->
+                                        <div class="col-lg-3 col-md-12">
+
+
+                                            <!-- Filter Widget -->
+                                            <div class="bg-light p-4 mb-4 rounded shadow-sm">
+                                                <h5
+                                                    class="fw-bold mb-3 text-uppercase border-bottom pb-2 border-danger">
+                                                    Danh Mục
+                                                </h5>
+                                                <div class="accordion" id="accordionCategory">
+                                                    <% /* Map keys to display labels/colors same as mega menu or
+                                                        simplify */ const sidebarGroups=[ { key: 'team-sports' ,
+                                                        title: 'THỂ THAO ĐỒNG ĐỘI' , color: 'primary' }, {
+                                                        key: 'racket-individual' , title: 'RACKET & CÁ NHÂN' ,
+                                                        color: 'success' }, { key: 'billiards-accessories' ,
+                                                        title: 'BI-A & PHỤ KIỆN' , color: 'dark' } ];
+                                                        sidebarGroups.forEach(function(group, index) { const
+                                                        groupData=megaMenu[group.key]; if (groupData &&
+                                                        groupData.columns && groupData.columns.length> 0) {
+                                                        %>
+                                                        <div class="accordion-item border-0 border-bottom">
+                                                            <h2 class="accordion-header" id="heading<%= index %>">
+                                                                <button
+                                                                    class="accordion-button <%= index !== 0 ? 'collapsed' : '' %> py-2 text-<%= group.color %> fw-bold bg-transparent shadow-none"
+                                                                    type="button" data-bs-toggle="collapse"
+                                                                    data-bs-target="#collapse<%= index %>">
+                                                                    <%= group.title %>
+                                                                </button>
+                                                            </h2>
+                                                            <div id="collapse<%= index %>"
+                                                                class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>"
+                                                                data-bs-parent="#accordionCategory">
+                                                                <div class="accordion-body py-1 ps-3">
+                                                                    <% groupData.columns.forEach(function(col) { const
+                                                                        parent=col.parent; %>
+                                                                        <a href="/products?cat=<%= parent.slug %>"
+                                                                            class="d-block text-dark text-decoration-none py-1 hover-red <%= currentCat === parent.slug ? 'fw-bold text-danger' : '' %>">
+                                                                            <i
+                                                                                class="fas fa-angle-right me-2 text-muted"></i>
+                                                                            <%= parent.name %>
+                                                                        </a>
+                                                                        <% }) %>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% } }); %>
+
+                                                            <!-- Dynamic 'Brands' or 'Other' if needed, or just keep the core structure -->
+                                                </div>
+                                            </div>
+
+                                            <div class="bg-light p-4 mb-4 rounded shadow-sm">
+                                                <h5
+                                                    class="fw-bold mb-3 text-uppercase border-bottom pb-2 border-danger">
+                                                    Giới Tính
+                                                </h5>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <a href="/products?gender=male"
+                                                        class="text-dark text-decoration-none hover-red"><i
+                                                            class="fas fa-male me-2 w-20"></i>Nam</a>
+                                                    <a href="/products?gender=female"
+                                                        class="text-dark text-decoration-none hover-red"><i
+                                                            class="fas fa-female me-2 w-20"></i>Nữ</a>
+                                                    <a href="/products?gender=kid"
+                                                        class="text-dark text-decoration-none hover-red"><i
+                                                            class="fas fa-child me-2 w-20"></i>Trẻ Em</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Shop Sidebar End -->
+
+                                        <!-- Shop Product Start -->
+                                        <div class="col-lg-9 col-md-12">
+                                            <div class="row pb-3">
+                                                <div class="col-12 pb-1">
+                                                    <div
+                                                        class="d-flex align-items-center justify-content-between mb-4 bg-light p-3 rounded">
+                                                        <div>
+                                                            <% if (searchQuery) { %>
+                                                                <h4 class="mb-0 fw-bold">Kết quả tìm kiếm: "<span
+                                                                        class="text-danger">
+                                                                        <%= searchQuery %>
+                                                                    </span>"</h4>
+                                                                <% } else { %>
+                                                                    <h4 class="mb-0 fw-bold text-uppercase">
+                                                                        <%= pageTitle %>
+                                                                    </h4>
+                                                                    <% } %>
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-outline-dark dropdown-toggle btn-sm"
+                                                                type="button" id="triggerId" data-bs-toggle="dropdown"
+                                                                aria-haspopup="true" aria-expanded="false">
+                                                                Sắp xếp: <%= currentSort==='latest' ? 'Mới nhất' :
+                                                                    (currentSort==='price-asc' ? 'Giá tăng dần'
+                                                                    : 'Giá giảm dần' ) %>
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-end"
+                                                                aria-labelledby="triggerId">
+                                                                <a class="dropdown-item <%= currentSort === 'latest' ? 'active' : '' %>"
+                                                                    href="/products?<%= baseQuery %>sort=latest">Mới
+                                                                    nhất</a>
+                                                                <a class="dropdown-item <%= currentSort === 'price-asc' ? 'active' : '' %>"
+                                                                    href="/products?<%= baseQuery %>sort=price-asc">Giá
+                                                                    tăng
+                                                                    dần</a>
+                                                                <a class="dropdown-item <%= currentSort === 'price-desc' ? 'active' : '' %>"
+                                                                    href="/products?<%= baseQuery %>sort=price-desc">Giá
+                                                                    giảm dần</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <% if (products && products.length> 0) { %>
+                                                    <% products.forEach(p=> { %>
+                                                        <div class="col-lg-4 col-md-6 col-sm-12 pb-1 mb-4">
+                                                            <div class="card product-card h-100 border-0 shadow-sm">
+                                                                <div
+                                                                    class="card-img-container position-relative overflow-hidden rounded-top">
+                                                                    <a href="/products/<%= p._id %>">
+                                                                        <img class="card-img-top" src="<%= p.image %>"
+                                                                            alt="<%= p.name %>">
+                                                                    </a>
+                                                                    <% if (p.discountPrice) { %>
+                                                                        <div
+                                                                            class="position-absolute top-0 start-0 m-2 badge bg-danger rounded-0">
+                                                                            -
+                                                                            <%= Math.round(100 -
+                                                                                (p.discountPrice/p.price * 100)) %>
+                                                                                %
+                                                                        </div>
+                                                                        <% } %>
+                                                                </div>
+                                                                <div
+                                                                    class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                                                    <h6 class="text-truncate mb-3 px-3 fw-bold"><a
+                                                                            href="/products/<%= p._id %>"
+                                                                            class="text-dark text-decoration-none">
+                                                                            <%= p.name %>
+                                                                        </a></h6>
+                                                                    <div class="d-flex justify-content-center">
+                                                                        <% if (p.discountPrice) { %>
+                                                                            <h6 class="text-danger fw-bold">
+                                                                                <%= p.discountPrice.toLocaleString('vi-VN')
+                                                                                    %>₫
+                                                                            </h6>
+                                                                            <h6 class="text-muted ml-2 ms-2"><del>
+                                                                                    <%= p.price.toLocaleString('vi-VN')
+                                                                                        %>₫
+                                                                                </del></h6>
+                                                                            <% } else { %>
+                                                                                <h6 class="text-dark fw-bold">
+                                                                                    <%= p.price.toLocaleString('vi-VN')
+                                                                                        %>₫
+                                                                                </h6>
+                                                                                <% } %>
+                                                                    </div>
+                                                                </div>
+                                                                <div
+                                                                    class="card-footer bg-white border-0 p-0 mb-3 mx-3">
+                                                                    <form action="/cart/add" method="POST">
+                                                                        <input type="hidden" name="productId"
+                                                                            value="<%= p._id %>">
+                                                                        <input type="hidden" name="quantity" value="1">
+                                                                        <button type="submit"
+                                                                            class="btn btn-dark w-100 py-2 btn-sm fw-bold shadow-sm transition-transform">
+                                                                            <i class="fas fa-cart-plus me-2"></i> THÊM
+                                                                            VÀO
+                                                                            GIỎ
+                                                                        </button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% }) %>
+                                                            <% } else { %>
+                                                                <div class="col-12 text-center py-5">
+                                                                    <div class="bg-light p-5 rounded">
+                                                                        <i
+                                                                            class="fas fa-search fa-3x text-muted mb-3"></i>
+                                                                        <h3 class="text-muted">Không tìm thấy sản phẩm
+                                                                            nào!
+                                                                        </h3>
+                                                                        <p>Hãy thử thay đổi bộ lọc hoặc tìm kiếm từ khóa
+                                                                            khác.</p>
+                                                                        <a href="/products"
+                                                                            class="btn btn-primary mt-3">Xem
+                                                                            Tất Cả
+                                                                            Sản Phẩm</a>
+                                                                    </div>
+                                                                </div>
+                                                                <% } %>
+
+                                                                    <!-- Pagination (Optional Placeholder) -->
+                                                                    <!-- <div class="col-12 pb-1">
+                    <nav aria-label="Page navigation">
+                      <ul class="pagination justify-content-center mb-3">
+                        <li class="page-item disabled">
+                          <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                            <span class="sr-only">Previous</span>
+                          </a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item">
+                          <a class="page-link" href="#" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                            <span class="sr-only">Next</span>
+                          </a>
+                        </li>
+                      </ul>
+                    </nav>
+                </div> -->
+                                            </div>
+                                        </div>
+                                        <!-- Shop Product End -->
+                                    </div>
+                                </div>
+
+                                <%- include('../partials/footer') %>

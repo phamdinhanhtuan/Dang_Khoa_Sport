@@ -1,38 +1,22 @@
-const User = require('../models/User');
+const userService = require('../services/userService');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
 
 exports.toggleWishlist = catchAsync(async (req, res, next) => {
     const { productId } = req.body;
-    let user = await User.findById(req.user.id);
-
-    if (!user) return next(new AppError('User not found', 404));
-
-    const productIndex = user.wishlist.indexOf(productId);
-
-    let action;
-    if (productIndex === -1) {
-        user.wishlist.push(productId);
-        action = 'added';
-    } else {
-        user.wishlist.splice(productIndex, 1);
-        action = 'removed';
-    }
-
-    await user.save({ validateBeforeSave: false });
+    const result = await userService.toggleWishlist(req.user.id, productId);
 
     res.status(200).json({
         status: 'success',
-        action,
-        wishlist: user.wishlist
+        action: result.action,
+        wishlist: result.wishlist
     });
 });
 
 exports.getWishlist = catchAsync(async (req, res, next) => {
-    const user = await User.findById(req.user.id).populate('wishlist');
+    const wishlist = await userService.getWishlist(req.user.id);
 
     res.status(200).json({
         status: 'success',
-        wishlist: user.wishlist
+        wishlist
     });
 });

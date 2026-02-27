@@ -1,0 +1,215 @@
+<%- include('../partials/header') %>
+
+    <div class="row justify-content-center py-5">
+        <div class="col-md-8">
+            <h2 class="mb-4">Thông tin giao hàng</h2>
+
+            <% if(typeof error !=='undefined' ) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <form action="/checkout" method="POST">
+                                <div class="mb-3">
+                                    <label class="form-label">Họ tên người nhận</label>
+                                    <input type="text" name="fullName" class="form-control" value="<%= user.name %>"
+                                        required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light text-secondary"
+                                            id="basic-addon1">+84</span>
+                                        <input type="tel" name="phone" id="phone" class="form-control" required
+                                            pattern="[0-9]{9,10}" title="Nhập 9-10 chữ số còn lại của số điện thoại"
+                                            placeholder="Ví dụ: 912xxxxxx">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Tỉnh / Thành phố</label>
+                                        <select name="city" id="city" class="form-select" required
+                                            onchange="renderDistricts()">
+                                            <option value="" selected disabled>Chọn Tỉnh / Thành phố</option>
+                                            <option value="Hà Nội">Hà Nội</option>
+                                            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                                            <option value="Đà Nẵng">Đà Nẵng</option>
+                                            <!-- Other provinces would go here, kept short for demo or add full list if needed -->
+                                            <option value="An Giang">An Giang</option>
+                                            <option value="Bà Rịa - Vũng Tàu">Bà Rịa - Vũng Tàu</option>
+                                            <option value="Bình Dương">Bình Dương</option>
+                                            <option value="Cần Thơ">Cần Thơ</option>
+                                            <option value="Hải Phòng">Hải Phòng</option>
+                                            <option value="Khác">Tỉnh thành khác...</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Quận / Huyện</label>
+                                        <select name="district" id="district" class="form-select" required
+                                            onchange="renderWards()" disabled>
+                                            <option value="" selected disabled>Chọn Quận / Huyện</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Phường / Xã</label>
+                                        <select name="ward" id="ward" class="form-select" required disabled>
+                                            <option value="" selected disabled>Chọn Phường / Xã</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Địa chỉ chi tiết</label>
+                                    <input type="text" name="address" class="form-control" required
+                                        placeholder="Số nhà, tên đường...">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Ghi chú</label>
+                                    <textarea name="note" class="form-control" style="resize: none;"
+                                        rows="2"></textarea>
+                                </div>
+
+                                <hr>
+                                <button type="submit" class="btn btn-success btn-lg w-100">Đặt hàng ngay</button>
+                            </form>
+                        </div>
+                    </div>
+        </div>
+    </div>
+
+    <script>
+        // API Endpoint for Vietnam Administrative Divisions
+        const API_HOST = "https://provinces.open-api.vn/api/";
+
+        const citySelect = document.getElementById('city');
+        const districtSelect = document.getElementById('district');
+        const wardSelect = document.getElementById('ward');
+
+        // Fetch Provinces on Load
+        async function loadProvinces() {
+            try {
+                const response = await fetch(API_HOST + "?depth=1");
+                const data = await response.json();
+
+                // Clear existing options except default
+                citySelect.innerHTML = '<option value="" selected disabled>Chọn Tỉnh / Thành phố</option>';
+
+                data.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province.code; // Use code for API fetching, but we might want Name for DB
+                    option.textContent = province.name;
+                    option.dataset.name = province.name; // Store name
+                    citySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Error loading provinces:", error);
+            }
+        }
+
+        // Fetch Districts when City changes
+        async function renderDistricts() {
+            const cityCode = citySelect.value;
+
+            // Reset downstream
+            districtSelect.innerHTML = '<option value="" selected disabled>Chọn Quận / Huyện</option>';
+            wardSelect.innerHTML = '<option value="" selected disabled>Chọn Phường / Xã</option>';
+            districtSelect.disabled = true;
+            wardSelect.disabled = true;
+
+            if (!cityCode) return;
+
+            try {
+                const response = await fetch(API_HOST + "p/" + cityCode + "?depth=2");
+                const data = await response.json();
+
+                data.districts.forEach(district => {
+                    const option = document.createElement('option');
+                    option.value = district.code;
+                    option.textContent = district.name;
+                    option.dataset.name = district.name;
+                    districtSelect.appendChild(option);
+                });
+                districtSelect.disabled = false;
+
+                // Update hidden input for City Name if we were using a form backend that expects names
+                // For this demo, let's assume backend accepts the text from the select if we change `value` to name?
+                // Actually, the current backend likely expects just a string. 
+                // We should probably keep value as Code for the API and use a hidden input or change value to Name AFTER selection?
+                // Simplest: use Code for value to fetch children, but when submitting form we might send Code. 
+                // Let's modify the form submission to send NAMES by adding hidden inputs or capturing text.
+                // OR: simpler approach for this codebase: set value to Name, but store Code in a data attribute?
+                // No, select value is what's sent.
+                // Let's stick to standard practice: 
+                // 1. We keep value=code to make API calls easier.
+                // 2. We add invisible inputs for the actual names to send to backend.
+            } catch (error) {
+                console.error("Error loading districts:", error);
+            }
+        }
+
+        // Fetch Wards when District changes
+        async function renderWards() {
+            const districtCode = districtSelect.value;
+
+            wardSelect.innerHTML = '<option value="" selected disabled>Chọn Phường / Xã</option>';
+            wardSelect.disabled = true;
+
+            if (!districtCode) return;
+
+            try {
+                const response = await fetch(API_HOST + "d/" + districtCode + "?depth=2");
+                const data = await response.json();
+
+                data.wards.forEach(ward => {
+                    const option = document.createElement('option');
+                    option.value = ward.name; // For Ward, we can just use Name as it's the leaf
+                    option.textContent = ward.name;
+                    wardSelect.appendChild(option);
+                });
+                wardSelect.disabled = false;
+            } catch (error) {
+                console.error("Error loading wards:", error);
+            }
+
+        }
+
+        // Form Submission Interceptor to ensure we send Names not Codes for City/District
+        document.querySelector('form').addEventListener('submit', function (e) {
+            // Update the values to names right before submit
+            if (citySelect.value) {
+                const selectedOption = citySelect.options[citySelect.selectedIndex];
+                // Create a hidden input for city name if we want to preserve the code in the select for UI logic, 
+                // BUT since we are submitting, we can just change the value? 
+                // Actually, simply adding hidden inputs with the name='city' and disabling the select is a trick.
+                // Let's just create hidden inputs.
+
+                const hiddenCity = document.createElement('input');
+                hiddenCity.type = 'hidden';
+                hiddenCity.name = 'city';
+                hiddenCity.value = selectedOption.dataset.name || selectedOption.text;
+                this.appendChild(hiddenCity);
+                citySelect.removeAttribute('name'); // Remove name from select so it's not sent
+            }
+
+            if (districtSelect.value) {
+                const selectedOption = districtSelect.options[districtSelect.selectedIndex];
+                const hiddenDistrict = document.createElement('input');
+                hiddenDistrict.type = 'hidden';
+                hiddenDistrict.name = 'district';
+                hiddenDistrict.value = selectedOption.dataset.name || selectedOption.text;
+                this.appendChild(hiddenDistrict);
+                districtSelect.removeAttribute('name');
+            }
+        });
+
+        // Initialize
+        loadProvinces();
+    </script>
+
+    <%- include('../partials/footer') %>

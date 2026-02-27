@@ -1,0 +1,98 @@
+<div class="row g-0">
+    <!-- Main Content (80% Width) -->
+    <div class="col-lg-10 col-md-12 p-4 bg-white">
+        <div class="row g-4">
+            <% const groups=[ { key: 'team-sports' , title: 'THỂ THAO ĐỒNG ĐỘI' , color: 'primary' }, {
+                key: 'racket-individual' , title: 'RACKET & CÁ NHÂN' , color: 'success' }, {
+                key: 'billiards-accessories' , title: 'BI-A & PHỤ KIỆN' , color: 'dark' } ]; const getUrl=function(cat)
+                { return '/products?cat=' + cat.slug; }; %>
+
+                <% groups.forEach(function(group) { const groupData=megaMenu[group.key]; if (groupData &&
+                    groupData.columns && groupData.columns.length> 0) {
+                    %>
+                    <div class="col-md-4 border-end">
+                        <h6 class="fw-bold text-uppercase mb-3 text-<%= group.color %> border-bottom pb-2 border-<%= group.color %> border-3"
+                            style="font-size: 0.9rem; letter-spacing: 1px;">
+                            <%= group.title %>
+                        </h6>
+
+                        <% groupData.columns.forEach(function(col) { const parent=col.parent; const
+                            children=col.children || []; %>
+                            <div class="mb-3">
+                                <a href="<%= getUrl(parent) %>"
+                                    class="fw-bold text-dark text-decoration-none d-block mb-1 hover-<%= group.color %>">
+                                    <%= parent.name %>
+                                        <% if (parent.slug==='pickleball' ) { %>
+                                            <span class="badge bg-danger rounded-pill ms-1"
+                                                style="font-size: 0.6rem;">HOT</span>
+                                            <% } %>
+                                </a>
+
+                                <% if (children.length> 0) { %>
+                                    <ul class="list-unstyled ms-2 mb-0 border-start border-2 ps-2">
+                                        <% children.forEach(function(child) { %>
+                                            <li><a href="<%= getUrl(child) %>"
+                                                    class="text-decoration-none text-secondary hover-<%= group.color %> d-block py-1 small">
+                                                    <%= child.name %>
+                                                </a></li>
+                                            <% }) %>
+                                    </ul>
+                                    <% } %>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% } }) %>
+        </div>
+    </div>
+
+    <!-- Banner (20% Width) -->
+    <div class="col-lg-2 d-none d-lg-block">
+        <div
+            class="h-100 position-relative overflow-hidden bg-light px-2 py-2 d-flex align-items-center justify-content-center">
+            <a href="/products?cat=pickleball"
+                class="d-block w-100 h-100 position-relative rounded overflow-hidden text-decoration-none group-hover">
+                <img src="https://images.unsplash.com/photo-1626245359236-4c4e09477085?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                    alt="Pickleball Trend" class="img-fluid w-100 h-100 object-fit-cover transition-transform">
+                <div
+                    class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-25 d-flex flex-column align-items-center justify-content-center text-center p-2">
+                    <span class="badge bg-warning text-dark mb-2">TRENDING</span>
+                    <h5 class="text-white fw-bold text-uppercase" style="text-shadow: 1px 1px 3px rgba(0,0,0,0.8);">
+                        PICKLEBALL<br>2026</h5>
+                    <span class="btn btn-sm btn-light rounded-pill px-3 fw-bold mt-2 font-monospace">SHOP NOW</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+        border-color: #0085b8 !important;
+        color: #0085b8 !important;
+    }
+
+    .hover-primary:hover {
+        color: #0085b8 !important;
+    }
+
+    .hover-success:hover {
+        color: #198754 !important;
+    }
+
+    .hover-dark:hover {
+        color: #000 !important;
+    }
+
+    .transition-all {
+        transition: all 0.3s ease;
+    }
+
+    .transition-transform {
+        transition: transform 0.5s ease;
+    }
+
+    .group-hover:hover .transition-transform {
+        transform: scale(1.1);
+    }
+</style>

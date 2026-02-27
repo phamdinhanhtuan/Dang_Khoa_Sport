@@ -1,35 +1,49 @@
 const express = require('express');
-const adminController = require('../controllers/adminController');
-const { protect } = require('../middleware/auth');
-const admin = require('../middleware/admin');
-
 const router = express.Router();
+const adminController = require('../controllers/adminController');
+const userAdminController = require('../controllers/userAdminController');
+const orderAdminController = require('../controllers/orderAdminController');
+const productAdminController = require('../controllers/productAdminController');
+const categoryAdminController = require('../controllers/categoryAdminController');
+const upload = require('../middleware/uploadMiddleware');
+const { protect, restrictTo } = require('../middleware/auth');
 
-// Protect all admin routes
+// Public: Admin Login Page
+router.get('/login', adminController.getLogin);
+
+// Protected: All routes below this reside behind authentication & admin check
 router.use(protect);
-router.use(admin);
+router.use(restrictTo('admin'));
 
-// Orders
-router.get('/orders', adminController.getAllOrders);
-router.put('/orders/:id/status', adminController.updateOrderStatus);
+// Dashboard
+router.get('/', adminController.getDashboard);
 
-// Products (API Management)
-// Note: Frontend likely calls /api/products, but Prompt asked for /api/products in Admin APIs section.
-// Usually REST would be POST /api/products (protected).
-// I will mount this router as /api/admin... but Product routes requested are /api/products.
-// So I won't put Product routes HERE if they are mounted at /api/admin.
-// I'll put Order Management here. productRoutes.js handles Products.
-// BUT Prompt listed "Routes: POST /api/products - Create product (admin only) ...".
-// This implies `routes/productRoutes.js` should handle it.
-// I will keep `adminRoutes` focused on Order Management and Admin specific aggregations if any.
-// Actually, `adminController` has `createProduct`.
-// I will export router logic for products? NO.
-// I'll stick to the Requested Output Files list. It listed `routes/adminRoutes.js`.
-// It listed "Admin APIs" section.
-// I'll put the *pure* admin routes here.
+// Users Management
+router.get('/users', userAdminController.getUsers);
+router.post('/users/:id/delete', userAdminController.deleteUser); // Ideally DELETE, but HTML forms use POST
+router.get('/users/:id/delete', userAdminController.deleteUser); // Fallback for link-based delete
 
-// If I mount this at /api/admin:
-// GET /api/admin/orders -> Works.
-// PUT /api/admin/orders/:id/status -> Works.
+// Orders Management
+router.get('/orders', orderAdminController.getOrders);
+router.get('/orders/:id', orderAdminController.getOrder);
+router.post('/orders/:id', orderAdminController.updateOrderStatus);
+
+// Categories Management
+router.get('/categories', categoryAdminController.getAllCategories);
+router.get('/categories/new', categoryAdminController.getNewCategoryForm);
+router.post('/categories', categoryAdminController.createCategory);
+router.get('/categories/:id/edit', categoryAdminController.getEditCategoryForm);
+router.post('/categories/:id', categoryAdminController.updateCategory);
+router.get('/categories/:id/delete', categoryAdminController.deleteCategory);
+
+// Products Management
+router.get('/products', productAdminController.getAllProducts);
+router.get('/products/new', productAdminController.getNewProductForm);
+router.post('/products', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'galleryImages', maxCount: 10 }]), productAdminController.createProduct);
+router.get('/products/:id/edit', productAdminController.getEditProductForm);
+router.post('/products/:id', upload.fields([{ name: 'image', maxCount: 1 }, { name: 'galleryImages', maxCount: 10 }]), productAdminController.updateProduct);
+router.get('/products/:id/delete', productAdminController.deleteProduct);
+// Seed Categories
+router.get('/categories/seed', categoryAdminController.seedCategories);
 
 module.exports = router;

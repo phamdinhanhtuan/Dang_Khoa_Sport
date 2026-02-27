@@ -1,55 +1,30 @@
-const Order = require('../models/Order');
-const Product = require('../models/Product');
 const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
+const aiService = require('../services/aiAppService');
 
-// Orders
-exports.getAllOrders = catchAsync(async (req, res, next) => {
-    const orders = await Order.find().sort('-createdAt').populate('user', 'name email');
-    res.status(200).json({
-        status: 'success',
-        results: orders.length,
-        data: { orders }
-    });
-});
+/**
+ * Controller for General Admin Actions
+ */
 
-exports.updateOrderStatus = catchAsync(async (req, res, next) => {
-    const { status } = req.body;
-    const order = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true, runValidators: true });
+exports.getLogin = (req, res) => {
+    res.render('login');
+};
 
-    if (!order) return next(new AppError('Order not found', 404));
+exports.getDashboard = catchAsync(async (req, res, next) => {
+    // Parallelize data fetching for performance
+    const [summary, salesData, inventory] = await Promise.all([
+        aiService.getDashboardSummary(),
+        aiService.getSalesAnalytics(),
+        aiService.getInventoryInsights()
+    ]);
 
-    res.status(200).json({
-        status: 'success',
-        data: { order }
-    });
-});
-
-// Products (Admin Actions)
-exports.createProduct = catchAsync(async (req, res, next) => {
-    const product = await Product.create(req.body);
-    res.status(201).json({
-        status: 'success',
-        data: { product }
-    });
-});
-
-exports.updateProduct = catchAsync(async (req, res, next) => {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-    if (!product) return next(new AppError('Product not found', 404));
-
-    res.status(200).json({
-        status: 'success',
-        data: { product }
-    });
-});
-
-exports.deleteProduct = catchAsync(async (req, res, next) => {
-    const product = await Product.findByIdAndDelete(req.params.id);
-    if (!product) return next(new AppError('Product not found', 404));
-
-    res.status(204).json({
-        status: 'success',
-        data: null
+    res.render('dashboard', {
+        title: 'Admin Dashboard',
+        userCount: summary.userCount,
+        productCount: summary.productCount,
+        orderCount: summary.orderCount,
+        totalRevenue: summary.totalRevenue,
+        salesData,
+        inventory,
+        path: '/admin'
     });
 });

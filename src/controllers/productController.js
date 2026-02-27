@@ -1,108 +1,79 @@
 const productService = require('../services/productService');
-const catchAsync = require('../utils/catchAsync');
+const aiService = require('../services/aiAppService');
 const AppError = require('../utils/appError');
-const Category = require('../models/categoryModel'); // Needed for form rendering
+const catchAsync = require('../utils/catchAsync');
 
-// API Controllers
-exports.getAllProducts = catchAsync(async (req, res, next) => {
-    const { products, total } = await productService.getAllProducts(req.query);
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
+exports.getHomePage = catchAsync(async (req, res, next) => {
+    // 1. Fetch Data from Service
+    const homeData = await productService.getHomePageData();
 
-    // If request wants JSON (API)
-    if (req.originalUrl.startsWith('/api')) {
-        res.status(200).json({
-            status: 'success',
-            results: products.length,
-            total,
-            page,
-            totalPages: Math.ceil(total / limit),
-            data: { products }
-        });
-    } else {
-        // If view rendering (Admin or Shop)
-        res.locals.products = products;
-        res.locals.total = total;
-        res.locals.currentPage = page;
-        res.locals.totalPages = Math.ceil(total / limit);
-        next();
-    }
-});
+    // 2. AI Recommendations (User specific)
+    const recommendations = await aiService.getRecommendations(req.user);
 
-exports.getProduct = catchAsync(async (req, res, next) => {
-    const product = await productService.getProductById(req.params.id);
-
-    if (!product) {
-        return next(new AppError('No product found with that ID', 404));
-    }
-
-    if (req.originalUrl.startsWith('/api')) {
-        res.status(200).json({ status: 'success', data: { product } });
-    } else {
-        res.locals.product = product;
-        next();
-    }
-});
-
-exports.createProduct = catchAsync(async (req, res, next) => {
-    // Handle file upload if present
-    if (req.file) req.body.images = [`/uploads/${req.file.filename}`];
-
-    const newProduct = await productService.createProduct(req.body);
-
-    if (req.originalUrl.startsWith('/api')) {
-        res.status(201).json({ status: 'success', data: { product: newProduct } });
-    } else {
-        res.redirect('/admin/products');
-    }
-});
-
-exports.updateProduct = catchAsync(async (req, res, next) => {
-    if (req.file) req.body.images = [`/uploads/${req.file.filename}`];
-
-    const updatedProduct = await productService.updateProduct(req.params.id, req.body);
-
-    if (!updatedProduct) {
-        return next(new AppError('No product found with that ID', 404));
-    }
-
-    if (req.originalUrl.startsWith('/api')) {
-        res.status(200).json({ status: 'success', data: { product: updatedProduct } });
-    } else {
-        res.redirect('/admin/products');
-    }
-});
-
-exports.deleteProduct = catchAsync(async (req, res, next) => {
-    const product = await productService.deleteProduct(req.params.id);
-
-    if (!product) {
-        return next(new AppError('No product found with that ID', 404));
-    }
-
-    if (req.originalUrl.startsWith('/api')) {
-        res.status(204).json({ status: 'success', data: null });
-    } else {
-        res.redirect('/admin/products');
-    }
-});
-
-// View Controllers for Admin Product Pages (Simplified here for cohesion)
-exports.getAdminProductForm = catchAsync(async (req, res) => {
-    const categories = await Category.find();
-    res.render('admin/add-product', {
-        title: 'Add Product',
-        categories
+    res.render('shop/index', {
+        pageTitle: 'Trang chủ',
+        products: homeData.newArrivals, // Backward compatibility
+        newArrivals: homeData.newArrivals,
+        ...homeData, // spreads pickleballProducts, etc.
+        recommendations
     });
 });
 
-exports.getAdminEditProductForm = catchAsync(async (req, res) => {
-    const product = await productService.getProductById(req.params.id);
-    const categories = await Category.find();
+exports.getProducts = catchAsync(async (req, res, next) => {
+    // 1. Fetch Filtered Data from Service
+    const result = await productService.filterProducts(req.query);
 
-    res.render('admin/edit-product', {
-        title: 'Edit Product',
+    res.render('shop/product-list', {
+        pageTitle: 'Sản phẩm',
+        products: result.products,
+        categories: result.allCategories,
+        searchQuery: result.searchQuery,
+        currentCat: result.currentCategory ? result.currentCategory.slug : '', // Pass slug or ID as needed by view
+        currentGender: result.currentGender,
+        currentSort: result.currentSort,
+        currentCategory: result.currentCategory // Pass object if view needs details
+    });
+});
+
+exports.getProductDetail = catchAsync(async (req, res, next) => {
+    const { id } = req.params;
+
+    // 1. Fetch Product
+    const product = await productService.getProductById(id);
+    if (!product) {
+        return next(new AppError('Sản phẩm không tồn tại', 404));
+    }
+
+    // 2. Handle Recently Viewed (Cookie Logic remains in Controller as it's HTTP-specific)
+    let viewedIds = [];
+    if (req.cookies.recentlyViewed) {
+        try { viewedIds = JSON.parse(req.cookies.recentlyViewed); } catch (e) { viewedIds = []; }
+    }
+
+    // Update List
+    const currentId = product._id.toString();
+    viewedIds = viewedIds.filter(pid => pid !== currentId);
+    viewedIds.unshift(currentId);
+    if (viewedIds.length > 6) viewedIds = viewedIds.slice(0, 6);
+
+    res.cookie('recentlyViewed', JSON.stringify(viewedIds), { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true });
+
+    // 3. Fetch Recently Viewed Products Data
+    // Exclude current one for display
+    const recentViewedIds = viewedIds.filter(pid => pid !== currentId);
+    const recentlyViewedProducts = await productService.getProductsByIds(recentViewedIds);
+
+    // 4. AI Features
+    const relatedProducts = await aiService.getRecommendations(req.user, product);
+    const buyingAdvice = aiService.getBuyingAdvice(product);
+
+    res.render('shop/product-detail', {
+        pageTitle: product.name,
         product,
-        categories
+        relatedProducts,
+        recentlyViewedProducts,
+        buyingAdvice,
+        user: req.user
     });
 });
+

@@ -1,8 +1,7 @@
 const express = require('express');
 const productController = require('../controllers/productController');
 const adminController = require('../controllers/adminController');
-const { protect } = require('../middleware/auth');
-const admin = require('../middleware/admin');
+const { protect, restrictTo } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -11,8 +10,8 @@ router.get('/', productController.getAllProducts);
 router.get('/:id', productController.getProduct);
 
 // Admin Only
-router.post('/', protect, admin, adminController.createProduct);
-router.put('/:id', protect, admin, adminController.updateProduct);
-router.delete('/:id', protect, admin, adminController.deleteProduct);
+router.post('/', protect, restrictTo('admin'), productController.createProduct);
+router.put('/:id', protect, restrictTo('admin'), productController.updateProduct);
+router.delete('/:id', protect, restrictTo('admin'), productController.deleteProduct);
 
 module.exports = router;

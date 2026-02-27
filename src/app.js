@@ -9,20 +9,31 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { promisify } = require('util');
 const Cart = require('./models/Cart');
+const User = require('./models/User');
+const Review = require('./models/Review');
+const Product = require('./models/Product');
+const Category = require('./models/categoryModel');
 
 dotenv.config();
 
 const app = express();
+// Force Restart for Chatbot Routes
 
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+if (process.env.IS_ADMIN === 'true') {
+    app.set('views', path.join(__dirname, 'views/admin'));
+    console.log('🛡️  ADMIN VIEW ENGINE: src/views/admin');
+} else {
+    app.set('views', path.join(__dirname, 'views'));
+    console.log('🛍️  CUSTOMER VIEW ENGINE: src/views');
+}
 
 // Core Middleware
 app.use(cors());
+app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../public')));
 
 // Session
 app.use(session({
@@ -33,97 +44,95 @@ app.use(session({
     cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// USER REQUESTED LOCALE MIDDLEWARE
-// GLOBAL DATA MIDDLEWARE
+// Global Data & Session Auth Middleware
 app.use(async (req, res, next) => {
     try {
-        const lang = req.query.lang || req.cookies.lang || "vi";
-        res.locals.locale = lang;
-        res.locals.__ = (k) => k;
-        res.locals.formatMoney = (amount) => {
-            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-        };
+        res.locals.formatMoney = (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        res.locals.isAdmin = process.env.IS_ADMIN === 'true';
+        res.locals.path = req.path;
 
-        // Auth & Cart Count Logic
         let user = null;
-        let cartCount = 0;
-
-        // 1. Check if user is logged in (Token in cookie or session)
-        let token;
-        if (req.cookies && req.cookies.jwt) token = req.cookies.jwt;
-        else if (req.session && req.session.token) token = req.session.token;
+        let token = req.cookies.jwt || req.session.token;
 
         if (token) {
             try {
-                // Verify token
                 const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-                const currentUser = await require('./models/User').findById(decoded.id); // Lazy require User
-                if (currentUser) {
-                    user = currentUser;
-                    // Fetch Cart from DB
-                    const cart = await Cart.findOne({ user: user._id });
-                    if (cart && cart.items) {
-                        cartCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
-                    }
-                }
-            } catch (err) {
-                // Invalid token, ignore
-            }
+                user = await require('./models/User').findById(decoded.id);
+            } catch (err) { }
         }
 
-        // 2. If no user, check session cart
-        if (!user && req.session && req.session.cart) {
-            cartCount = req.session.cart.totalQty || 0;
-            // Or manual sum if totalQty not maintained
-            if (!req.session.cart.totalQty && req.session.cart.items) {
-                cartCount = req.session.cart.items.reduce((acc, item) => acc + item.quantity, 0);
-            }
-        }
-
-        req.user = user;
         res.locals.user = user;
-        res.locals.cartCount = cartCount;
+        req.user = user;
+
+        // Customer Only Logic
+        if (!res.locals.isAdmin) {
+            let cartCount = 0;
+            if (user) {
+                const cart = await Cart.findOne({ user: user._id });
+                if (cart && cart.items) {
+                    cartCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
+                }
+            }
+            res.locals.cartCount = cartCount;
+        }
 
     } catch (err) {
         console.error('Middleware Error:', err);
-        res.locals.user = null;
-        res.locals.cartCount = 0;
     }
     next();
 });
 
-// Health Check
-app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'UP', uptime: process.uptime() });
-});
+// Mega Menu (Only for Storefront)
+if (process.env.IS_ADMIN !== 'true') {
+    app.use(require('./middleware/megaMenuMiddleware'));
+}
 
-// Route Mounting
-app.use('/api/users', require('./routes/userRoutes'));
-app.use('/api/cart', require('./routes/cartRoutes'));
-app.use('/api/orders', require('./routes/orderRoutes'));
-app.use('/api/admin', require('./routes/adminRoutes'));
-app.use('/api/products', require('./routes/productRoutes'));
-app.use('/api/reviews', require('./routes/reviewRoutes'));
-app.use('/api/chatbot', require('./routes/chatbotRoutes'));
+// ROUTE MOUNTING
+if (process.env.IS_ADMIN === 'true') {
+    // --- ADMIN PORTAL ROUTES ---
+    console.log('🛡️  Mounting ADMIN routes only');
 
+    // Top-level redirects for common paths in Admin Portal
+    app.get('/login', (req, res) => res.render('login')); // Renders src/views/admin/login.ejs
+    app.use('/admin', require('./routes/admin.routes'));
+    app.use('/auth', require('./routes/authRoutes'));
 
-// Web Routes
-app.use('/', require('./routes/viewRoutes'));
-// app.use('/cart', ...); // cartRoutes logic mixed with API? It should generally be unique, but for legacy support:
-app.use('/cart', require('./routes/cartRoutes'));
-app.use('/orders', require('./routes/orderRoutes'));
-
+    // Convenience: Home redirects to Dashboard
+    app.get('/', (req, res) => res.redirect('/admin'));
+} else {
+    // --- CUSTOMER STOREFRONT ROUTES ---
+    console.log('🛍️  Mounting CUSTOMER routes only');
+    app.get('/shop', (req, res) => res.redirect('/products'));
+    app.use('/', require('./routes/viewRoutes'));
+    app.use('/auth', require('./routes/authRoutes'));
+    app.use('/api/chatbot', require('./routes/chatbotRoutes'));
+}
 
 // 404
-app.all(/(.*)/, (req, res, next) => {
-    const err = new Error(`Can't find ${req.originalUrl}`);
-    err.statusCode = 404;
-    next(err);
+app.use((req, res) => {
+    if (process.env.IS_ADMIN === 'true') {
+        res.status(404).render('404', {
+            title: '404 - Not Found',
+            path: '404'
+        });
+    } else {
+        res.status(404).render('404', {
+            pageTitle: 'Không tìm thấy trang'
+        });
+    }
 });
 
 // Error Handler
-const errorHandler = require('./middleware/errorHandler');
-
-app.use(errorHandler);
+/* 
+// For now, simple inline error handler to avoid requiring missing file
+app.use((err, req, res, next) => {
+    console.error("Global Error:", err);
+    res.status(err.statusCode || 500).render('error', { 
+        pageTitle: 'Lỗi', 
+        message: err.message || 'Something went wrong'
+    });
+});
+*/
+app.use(require('./middleware/errorHandler'));
 
 module.exports = app;

@@ -1,17 +1,17 @@
-const BaseRepository = require('./baseRepository');
-const Order = require('../models/orderModel');
+const Order = require('../models/Order');
 
-class OrderRepository extends BaseRepository {
-    constructor() {
-        super(Order);
+class OrderRepository {
+    async findAll(filter = {}) {
+        return await Order.find(filter);
     }
 
-    async findByUser(userId) {
-        return await this.model.find({ user: userId }).sort('-createdAt');
+    async count(filter = {}) {
+        return await Order.countDocuments(filter);
     }
 
-    async findRecent(limit = 5) {
-        return await this.model.find().sort('-createdAt').limit(limit).populate('user');
+    async aggregateRevenue() {
+        const orders = await Order.find();
+        return orders.reduce((acc, order) => acc + (order.totalAmount || 0), 0);
     }
 }
 

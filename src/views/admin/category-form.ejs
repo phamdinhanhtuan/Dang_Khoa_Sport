@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>
+            <%= title %>
+        </h3>
+        <a href="/admin/categories" class="btn btn-outline-secondary"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+            <% if (locals.error) { %>
+                <div class="alert alert-danger">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form action="/admin/categories<%= category._id ? '/' + category._id : '' %>" method="POST">
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Category Name</label>
+                                <input type="text" name="name" class="form-control" value="<%= category.name || '' %>"
+                                    required placeholder="e.g. Giày Bóng Đá">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Mega Menu Group</label>
+                                <select name="group" class="form-select">
+                                    <option value="other" <%=(!category.group || category.group==='other' ) ? 'selected'
+                                        : '' %>>None (Khác / Ẩn khỏi Mega Menu chính)</option>
+                                    <optgroup label="Cột Chính (Columns)">
+                                        <option value="team-sports" <%=category.group==='team-sports' ? 'selected' : ''
+                                            %>>Thể Thao Đồng Đội (Cột 1)</option>
+                                        <option value="racket-individual" <%=category.group==='racket-individual'
+                                            ? 'selected' : '' %>>Racket & Cá Nhân (Cột 2)</option>
+                                        <option value="billiards-accessories"
+                                            <%=category.group==='billiards-accessories' ? 'selected' : '' %>>Bi-a & Phụ
+                                            Kiện (Cột 3)</option>
+                                    </optgroup>
+                                    <optgroup label="Khác">
+                                        <option value="brands" <%=category.group==='brands' ? 'selected' : '' %>>Thương
+                                            Hiệu (Brands)</option>
+                                        <option value="sale" <%=category.group==='sale' ? 'selected' : '' %>>Sale / Xả
+                                            Kho</option>
+                                    </optgroup>
+                                </select>
+                                <div class="form-text">Chọn cột để hiển thị danh mục này trên Mega Menu.</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Parent Category (Optional)</label>
+                            <select name="parent" class="form-select">
+                                <option value="">-- No Parent (Top Level) --</option>
+                                <% if (locals.parents) { %>
+                                    <% parents.forEach(p=> { %>
+                                        <option value="<%= p._id %>" <%=(category.parent &&
+                                            category.parent.toString()===p._id.toString()) ? 'selected' : '' %>><%=
+                                                p.name %>
+                                        </option>
+                                        <% }) %>
+                                            <% } %>
+                            </select>
+                            <div class="form-text">Select a parent if this is a sub-category (e.g. "Giày Bóng Đá"
+                                belongs to "Bóng Đá").</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-bold">Order (Sort)</label>
+                                <input type="number" name="order" class="form-control"
+                                    value="<%= category.order || 0 %>" placeholder="0">
+                            </div>
+                            <div class="col-md-4 mb-3 d-flex align-items-end">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" name="showInHeader" value="true"
+                                        id="showInHeader" <%=category.showInHeader ? 'checked' : '' %>>
+                                    <label class="form-check-label fw-bold" for="showInHeader text-primary">Show in
+                                        Header Bar</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3 d-flex align-items-end">
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" name="showAsHot" value="true"
+                                        id="showAsHot" <%=category.showAsHot ? 'checked' : '' %>>
+                                    <label class="form-check-label fw-bold font-monospace"
+                                        for="showAsHot text-danger">Show as "HOT"</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Description (Optional)</label>
+                            <textarea name="description" class="form-control"
+                                rows="3"><%= category.description || '' %></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="submit" class="btn btn-primary px-4"><i class="fas fa-save me-2"></i> Save
+                                Category</button>
+                        </div>
+                    </form>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>

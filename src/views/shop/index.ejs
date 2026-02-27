@@ -1,0 +1,737 @@
+<%- include('../partials/header') %>
+
+    <!-- HERO SECTION: Carousel + Side Banners -->
+    <section class="container my-4">
+        <div class="row g-2">
+            <!-- Main Carousel (Left - 66%) -->
+            <div class="col-lg-8">
+                <div id="heroCarousel" class="carousel slide shadow-sm overflow-hidden" data-bs-ride="carousel"
+                    style="border-radius: 8px;">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"
+                            aria-current="true" aria-label="Slide 1"></button>
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"
+                            aria-label="Slide 2"></button>
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"
+                            aria-label="Slide 3"></button>
+                    </div>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active" data-bs-interval="4000">
+                            <!-- Slide 1: General Sports -->
+                            <div class="w-100 d-flex align-items-end justify-content-center text-white position-relative"
+                                style="height: 400px; background: url('/images/banners/store-front.jpg') top center/cover no-repeat;">
+                                <div class="position-absolute top-0 start-0 w-100 h-100"
+                                    style="background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.8) 100%);">
+                                </div>
+                                <div class="text-center position-relative z-1 pb-5">
+                                    <h2 class="display-5 fw-bold text-uppercase"
+                                        style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">Cửa Hàng Dụng Cụ Thể Thao</h2>
+                                    <p class="lead fw-bold mb-3" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">Chính
+                                        Hãng - Uy Tín - Chất Lượng</p>
+                                    <a href="/products"
+                                        class="btn btn-warning rounded-pill px-4 fw-bold text-uppercase shadow">Mua
+                                        Ngay</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item" data-bs-interval="4000">
+                            <!-- Slide 2: Sale/Summer -->
+                            <div class="w-100 d-flex align-items-center justify-content-center text-white position-relative"
+                                style="height: 400px; background: url('https://images.unsplash.com/photo-1556906781-9a412961d28c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;">
+                                <div class="position-absolute top-0 start-0 w-100 h-100"
+                                    style="background: rgba(0,0,0,0.3);"></div>
+                                <div class="text-center position-relative z-1">
+                                    <h2 class="display-4 fw-bold text-uppercase"
+                                        style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">XẢ KHO GIÁ SỐC</h2>
+                                    <p class="lead fw-bold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">Giảm giá
+                                        lên đến 50%</p>
+                                    <a href="/products?sort=price-asc"
+                                        class="btn btn-light rounded-pill px-4 fw-bold text-uppercase mt-2 shadow text-danger">Xem
+                                        Ngay</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item" data-bs-interval="4000">
+                            <!-- Slide 3: Pickleball -->
+                            <div class="w-100 d-flex align-items-center justify-content-center text-white position-relative"
+                                style="height: 400px; background: url('https://images.unsplash.com/photo-1626245359236-4c4e09477085?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;">
+                                <div class="position-absolute top-0 start-0 w-100 h-100"
+                                    style="background: rgba(0,0,0,0.4);"></div>
+                                <div class="text-center position-relative z-1">
+                                    <h2 class="display-4 fw-bold text-uppercase"
+                                        style="text-shadow: 2px 2px 4px rgba(0,0,0,0.6);">PICKLEBALL TREND</h2>
+                                    <p class="lead fw-bold" style="text-shadow: 1px 1px 2px rgba(0,0,0,0.6);">Bộ sưu tập
+                                        mới nhất 2026</p>
+                                    <a href="/products?cat=pickleball"
+                                        class="btn btn-success rounded-pill px-4 fw-bold text-uppercase mt-2 shadow border-0">Khám
+                                        Phá</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Controls -->
+                    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon shadow-sm rounded-circle bg-dark bg-opacity-25 p-3"
+                            aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon shadow-sm rounded-circle bg-dark bg-opacity-25 p-3"
+                            aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Side Banners (Right - 33%) -->
+            <div class="col-lg-4 d-none d-lg-flex flex-column gap-2">
+                <!-- Banner 1: Running -->
+                <div class="flex-grow-1 w-100 rounded-3 overflow-hidden d-flex align-items-center justify-content-center text-white shadow-sm position-relative group-hover-zoom"
+                    style="min-height: 195px; background: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover no-repeat;">
+                    <a href="/products?cat=chay-bo"
+                        class="text-decoration-none w-100 h-100 d-flex align-items-center justify-content-center position-relative">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-25 transition-bg">
+                        </div>
+                        <div class="text-center p-3 position-relative z-1">
+                            <h4 class="fw-bold text-white text-uppercase text-shadow">GIÀY CHẠY BỘ</h4>
+                            <p class="mb-2 small text-white fw-bold text-shadow">Êm ái trên từng bước chân</p>
+                            <span class="btn btn-sm btn-outline-light rounded-pill fw-bold mt-1">Xem Thêm</span>
+                        </div>
+                    </a>
+                </div>
+                <!-- Banner 2: Accessories -->
+                <div class="flex-grow-1 w-100 rounded-3 overflow-hidden d-flex align-items-center justify-content-center text-white shadow-sm position-relative group-hover-zoom"
+                    style="min-height: 195px; background: url('https://images.unsplash.com/photo-1550345332-09e3ac987658?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover no-repeat;">
+                    <a href="/products?cat=phu-kien"
+                        class="text-decoration-none w-100 h-100 d-flex align-items-center justify-content-center position-relative">
+                        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-25 transition-bg">
+                        </div>
+                        <div class="text-center p-3 position-relative z-1">
+                            <h4 class="fw-bold text-white text-uppercase text-shadow">PHỤ KIỆN GYM</h4>
+                            <p class="mb-2 small text-white fw-bold text-shadow">Nâng tầm phong cách</p>
+                            <span class="btn btn-sm btn-outline-light rounded-pill fw-bold mt-1">Mua Ngay</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICE GUARANTEE BAR -->
+    <section class="bg-white py-3 border-bottom shadow-sm mb-5">
+        <div class="container">
+            <div class="row text-center row-cols-2 row-cols-md-4 g-3">
+                <div class="col">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="fas fa-truck text-primary fs-4"></i>
+                        <div class="text-start">
+                            <span class="d-block fw-bold small text-uppercase">Vận chuyển toàn quốc</span>
+                            <span class="d-block text-muted" style="font-size: 0.75rem;">Thanh toán khi nhận hàng</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="fas fa-check-circle text-success fs-4"></i>
+                        <div class="text-start">
+                            <span class="d-block fw-bold small text-uppercase">Cam kết chính hãng</span>
+                            <span class="d-block text-muted" style="font-size: 0.75rem;">100% Hoàn tiền nếu giả</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="fas fa-sync-alt text-warning fs-4"></i>
+                        <div class="text-start">
+                            <span class="d-block fw-bold small text-uppercase">Đổi trả dễ dàng</span>
+                            <span class="d-block text-muted" style="font-size: 0.75rem;">Trong vòng 7 ngày</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <i class="fas fa-headset text-danger fs-4"></i>
+                        <div class="text-start">
+                            <span class="d-block fw-bold small text-uppercase">Hỗ trợ 24/7</span>
+                            <span class="d-block text-muted" style="font-size: 0.75rem;">Hotline: 0948.80.86.83</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEW ARRIVALS (SẢN PHẨM MỚI) -->
+    <section class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-primary">
+            <h3 class="fw-bold text-uppercase m-0 text-primary"><i class="fas fa-fire me-2 text-danger"></i>Sản phẩm mới
+            </h3>
+            <a href="/products" class="text-decoration-none text-muted small hover-primary">Xem tất cả <i
+                    class="fas fa-chevron-right ms-1"></i></a>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+            <% if (newArrivals && newArrivals.length> 0) { %>
+                <% newArrivals.forEach(product=> { %>
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm product-card transition-all">
+                            <div class="position-relative overflow-hidden">
+                                <!-- Badge -->
+                                <span
+                                    class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 small fw-bold z-1 m-2 rounded-1">-20%</span>
+
+                                <a href="/products/<%= product._id %>">
+                                    <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>"
+                                        style="height: 250px; object-fit: contain; padding: 1rem;">
+                                </a>
+
+                                <!-- Action Buttons (Hover) -->
+                                <div
+                                    class="product-actions position-absolute start-0 w-100 d-flex justify-content-center gap-2 p-2">
+                                    <button class="btn btn-light rounded-circle shadow-sm add-to-cart-btn hover-scale"
+                                        data-id="<%= product._id %>" title="Thêm vào giỏ">
+                                        <i class="fas fa-shopping-cart text-primary"></i>
+                                    </button>
+                                    <a href="/products/<%= product._id %>"
+                                        class="btn btn-light rounded-circle shadow-sm hover-scale" title="Xem chi tiết">
+                                        <i class="fas fa-eye text-secondary"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body text-center d-flex flex-column">
+                                <h6 class="card-title text-truncate mb-1">
+                                    <a href="/products/<%= product._id %>"
+                                        class="text-decoration-none text-dark fw-bold hover-primary">
+                                        <%= product.name %>
+                                    </a>
+                                </h6>
+                                <div class="mt-auto">
+                                    <p class="card-text fw-bold text-danger fs-5 mb-0">
+                                        <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                            }).format(product.price) %>
+                                    </p>
+                                    <small class="text-decoration-line-through text-muted small">
+                                        <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                            }).format(product.price * 1.2) %>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                        <% } else { %>
+                            <div class="col-12 text-center py-5">
+                                <p class="text-muted">Đang cập nhật sản phẩm...</p>
+                            </div>
+                            <% } %>
+        </div>
+    </section>
+
+    <!-- CATEGORY SECTION 1: BÓNG RỔ (BASKETBALL) -->
+    <section class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-warning">
+            <div class="d-flex align-items-center gap-3">
+                <h3 class="fw-bold text-uppercase m-0 text-dark">BÓNG RỔ</h3>
+                <span class="badge bg-warning text-dark rounded-pill">Hot</span>
+            </div>
+            <a href="/products?cat=basketball" class="text-decoration-none text-muted small hover-primary">Xem tất cả <i
+                    class="fas fa-chevron-right ms-1"></i></a>
+        </div>
+
+        <!-- Banner + Products Layout -->
+        <div class="row g-4">
+            <!-- Category Banner (Left) -->
+            <div class="col-md-3 d-none d-md-block">
+                <div class="h-100 rounded-3 overflow-hidden position-relative shadow-sm"
+                    style="background: url('https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover no-repeat;">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-4"
+                        style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                        <h4 class="text-white fw-bold mb-1">NBA STYLE</h4>
+                        <p class="text-white-50 small mb-3">Chuyên nghiệp từng cú ném</p>
+                        <a href="/products?cat=basketball" class="btn btn-sm btn-light rounded-pill px-3 fw-bold">Khám
+                            phá</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products (Right) -->
+            <div class="col-md-9">
+                <div class="row row-cols-2 row-cols-lg-3 g-3">
+                    <% if (typeof basketballProducts !=='undefined' && basketballProducts && basketballProducts.length>
+                        0) { %>
+                        <% basketballProducts.forEach(product=> { %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm product-card">
+                                    <div class="position-relative overflow-hidden">
+                                        <a href="/products/<%= product._id %>">
+                                            <img src="<%= product.image %>" class="card-img-top"
+                                                alt="<%= product.name %>"
+                                                style="height: 200px; object-fit: contain; padding: 0.5rem;">
+                                        </a>
+                                    </div>
+                                    <div class="card-body text-start p-2">
+                                        <h6 class="card-title text-truncate mb-1" style="font-size: 0.9rem;">
+                                            <a href="/products/<%= product._id %>"
+                                                class="text-decoration-none text-dark hover-primary">
+                                                <%= product.name %>
+                                            </a>
+                                        </h6>
+                                        <p class="card-text fw-bold text-danger mb-0">
+                                            <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                                }).format(product.price) %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="col-12 py-5 text-center">
+                                        <p class="text-muted small">Sản phẩm đang về hàng...</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY SECTION 2: PICKLEBALL -->
+    <section class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-success">
+            <div class="d-flex align-items-center gap-3">
+                <h3 class="fw-bold text-uppercase m-0 text-dark">PICKLEBALL</h3>
+                <span class="badge bg-success rounded-pill">Trending</span>
+            </div>
+            <a href="/products?cat=pickleball" class="text-decoration-none text-muted small hover-primary">Xem tất cả <i
+                    class="fas fa-chevron-right ms-1"></i></a>
+        </div>
+
+        <!-- Reverse Layout: Products Left, Banner Right -->
+        <div class="row g-4">
+            <!-- Products (Left) -->
+            <div class="col-md-9">
+                <div class="row row-cols-2 row-cols-lg-3 g-3">
+                    <% if (pickleballProducts && pickleballProducts.length> 0) { %>
+                        <% pickleballProducts.forEach(product=> { %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm product-card">
+                                    <div class="position-relative overflow-hidden">
+                                        <a href="/products/<%= product._id %>">
+                                            <img src="<%= product.image %>" class="card-img-top"
+                                                alt="<%= product.name %>"
+                                                style="height: 200px; object-fit: contain; padding: 0.5rem;">
+                                        </a>
+                                    </div>
+                                    <div class="card-body text-start p-2">
+                                        <h6 class="card-title text-truncate mb-1" style="font-size: 0.9rem;">
+                                            <a href="/products/<%= product._id %>"
+                                                class="text-decoration-none text-dark hover-primary">
+                                                <%= product.name %>
+                                            </a>
+                                        </h6>
+                                        <p class="card-text fw-bold text-danger mb-0">
+                                            <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                                }).format(product.price) %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="col-12 py-5 text-center">
+                                        <p class="text-muted small">Sản phẩm đang về hàng...</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+            <!-- Category Banner (Right) -->
+            <div class="col-md-3 d-none d-md-block">
+                <div class="h-100 rounded-3 overflow-hidden position-relative shadow-sm"
+                    style="background: url('https://images.unsplash.com/photo-1626245359236-4c4e09477085?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover no-repeat;">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-4"
+                        style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                        <h4 class="text-white fw-bold mb-1">PICKLEBALL</h4>
+                        <p class="text-white-50 small mb-3">Môn thể thao thời thượng</p>
+                        <a href="/products?cat=pickleball"
+                            class="btn btn-sm btn-success rounded-pill px-3 fw-bold border-0">Mua Ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY SECTION 3: CHẠY BỘ (RUNNING) -->
+    <section class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-info">
+            <h3 class="fw-bold text-uppercase m-0 text-dark">CHẠY BỘ</h3>
+            <a href="/products?cat=running" class="text-decoration-none text-muted small hover-primary">Xem tất cả <i
+                    class="fas fa-chevron-right ms-1"></i></a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Banner Left -->
+            <div class="col-md-3 d-none d-md-block">
+                <div class="h-100 rounded-3 overflow-hidden position-relative shadow-sm"
+                    style="background: url('https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover no-repeat;">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-4"
+                        style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                        <h4 class="text-white fw-bold mb-1">RUN FAST</h4>
+                        <p class="text-white-50 small mb-3">Bứt phá mọi giới hạn</p>
+                        <a href="/products?cat=running"
+                            class="btn btn-sm btn-info text-white rounded-pill px-3 fw-bold border-0">Xem Thêm</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="row row-cols-2 row-cols-lg-3 g-3">
+                    <% if (runningProducts && runningProducts.length> 0) { %>
+                        <% runningProducts.forEach(product=> { %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm product-card">
+                                    <div class="position-relative overflow-hidden">
+                                        <a href="/products/<%= product._id %>">
+                                            <img src="<%= product.image %>" class="card-img-top"
+                                                alt="<%= product.name %>"
+                                                style="height: 200px; object-fit: contain; padding: 0.5rem;">
+                                        </a>
+                                    </div>
+                                    <div class="card-body text-start p-2">
+                                        <h6 class="card-title text-truncate mb-1" style="font-size: 0.9rem;">
+                                            <a href="/products/<%= product._id %>"
+                                                class="text-decoration-none text-dark hover-primary">
+                                                <%= product.name %>
+                                            </a>
+                                        </h6>
+                                        <p class="card-text fw-bold text-danger mb-0">
+                                            <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                                }).format(product.price) %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="col-12 py-5 text-center">
+                                        <p class="text-muted small">Sản phẩm đang về hàng...</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY SECTION 4: BÓNG CHUYỀN (VOLLEYBALL) -->
+    <section class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-warning">
+            <h3 class="fw-bold text-uppercase m-0 text-dark">BÓNG CHUYỀN</h3>
+            <a href="/products?cat=volleyball" class="text-decoration-none text-muted small hover-primary">Xem tất cả <i
+                    class="fas fa-chevron-right ms-1"></i></a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-9">
+                <div class="row row-cols-2 row-cols-lg-3 g-3">
+                    <% if (volleyballProducts && volleyballProducts.length> 0) { %>
+                        <% volleyballProducts.forEach(product=> { %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm product-card">
+                                    <div class="position-relative overflow-hidden">
+                                        <a href="/products/<%= product._id %>">
+                                            <img src="<%= product.image %>" class="card-img-top"
+                                                alt="<%= product.name %>"
+                                                style="height: 200px; object-fit: contain; padding: 0.5rem;">
+                                        </a>
+                                    </div>
+                                    <div class="card-body text-start p-2">
+                                        <h6 class="card-title text-truncate mb-1" style="font-size: 0.9rem;">
+                                            <a href="/products/<%= product._id %>"
+                                                class="text-decoration-none text-dark hover-primary">
+                                                <%= product.name %>
+                                            </a>
+                                        </h6>
+                                        <p class="card-text fw-bold text-danger mb-0">
+                                            <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                                }).format(product.price) %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <div class="col-12 py-5 text-center">
+                                        <p class="text-muted small">Sản phẩm đang về hàng...</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+
+            <!-- Banner Right -->
+            <div class="col-md-3 d-none d-md-block">
+                <div class="h-100 rounded-3 overflow-hidden position-relative shadow-sm"
+                    style="background: url('https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover no-repeat;">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-4"
+                        style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                        <h4 class="text-white fw-bold mb-1">VOLLEYBALL</h4>
+                        <p class="text-white-50 small mb-3">Đam mê rực cháy</p>
+                        <a href="/products?cat=volleyball"
+                            class="btn btn-sm btn-warning rounded-pill px-3 fw-bold border-0 text-dark">Mua Ngay</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORY SECTION 5: BI-A (BILLIARDS) -->
+    <section class="container mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-2 border-dark">
+            <h3 class="fw-bold text-uppercase m-0 text-dark">BI-A (BILLIARDS)</h3>
+            <a href="/products?cat=billiards" class="text-decoration-none text-muted small hover-primary">Xem tất cả <i
+                    class="fas fa-chevron-right ms-1"></i></a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Banner Left -->
+            <div class="col-md-3 d-none d-md-block">
+                <div class="h-100 rounded-3 overflow-hidden position-relative shadow-sm"
+                    style="background: url('https://images.unsplash.com/photo-1577457723908-1cc022727197?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80') center/cover no-repeat;">
+                    <div class="position-absolute bottom-0 start-0 w-100 p-4"
+                        style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                        <h4 class="text-white fw-bold mb-1">BILLIARDS</h4>
+                        <p class="text-white-50 small mb-3">Đẳng cấp cơ thủ</p>
+                        <a href="/products?cat=billiards"
+                            class="btn btn-sm btn-dark rounded-pill px-3 fw-bold border-0">Khám Phá</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="row row-cols-2 row-cols-lg-3 g-3">
+                    <!-- IMPORTANT: Assuming we fetch billiardProducts in controller. If not, use generic or omit -->
+                    <% if (typeof billiardProducts !=='undefined' && billiardProducts && billiardProducts.length> 0) {
+                        %>
+                        <% billiardProducts.forEach(product=> { %>
+                            <div class="col">
+                                <div class="card h-100 border-0 shadow-sm product-card">
+                                    <div class="position-relative overflow-hidden">
+                                        <a href="/products/<%= product._id %>">
+                                            <img src="<%= product.image %>" class="card-img-top"
+                                                alt="<%= product.name %>"
+                                                style="height: 200px; object-fit: contain; padding: 0.5rem;">
+                                        </a>
+                                    </div>
+                                    <div class="card-body text-start p-2">
+                                        <h6 class="card-title text-truncate mb-1" style="font-size: 0.9rem;">
+                                            <a href="/products/<%= product._id %>"
+                                                class="text-decoration-none text-dark hover-primary">
+                                                <%= product.name %>
+                                            </a>
+                                        </h6>
+                                        <p class="card-text fw-bold text-danger mb-0">
+                                            <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                                }).format(product.price) %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }); %>
+                                <% } else { %>
+                                    <!-- Fallback if specific variable not passed but category exists, or just empty message -->
+                                    <div class="col-12 py-5 text-center">
+                                        <p class="text-muted small">Sản phẩm đang về hàng...</p>
+                                    </div>
+                                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI RECOMMENDED (Already in original, kept for feature completeness) -->
+    <% if (recommendations && recommendations.length> 0) { %>
+        <section class="container mb-5">
+            <div class="d-flex align-items-center mb-4 pb-2 border-bottom">
+                <h3 class="fw-bold text-uppercase m-0 text-secondary"><i class="fas fa-magic me-2 text-warning"></i>Gợi
+                    ý cho bạn</h3>
+            </div>
+            <div class="row row-cols-2 row-cols-md-4 g-4">
+                <% recommendations.forEach(product=> { %>
+                    <div class="col">
+                        <div class="card h-100 border-0 shadow-sm product-card">
+                            <a href="/products/<%= product._id %>">
+                                <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>"
+                                    style="height: 200px; object-fit: contain; padding: 1rem;">
+                            </a>
+                            <div class="card-body text-center">
+                                <h6 class="card-title text-truncate">
+                                    <a href="/products/<%= product._id %>"
+                                        class="text-decoration-none text-dark hover-primary">
+                                        <%= product.name %>
+                                    </a>
+                                </h6>
+                                <p class="card-text fw-bold text-danger">
+                                    <%= new Intl.NumberFormat('vi-VN', { style: 'currency' , currency: 'VND'
+                                        }).format(product.price) %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+            </div>
+        </section>
+        <% } %>
+
+            <!-- CLIENT BRANDS CAROUSEL -->
+            <section class="container mb-5">
+                <div class="text-center mb-4">
+                    <h5 class="text-uppercase text-muted fw-bold ls-2">Đối tác thương hiệu</h5>
+                </div>
+                <div class="row row-cols-3 row-cols-md-4 g-4 justify-content-center">
+                    <!-- NIKE -->
+                    <div class="col text-center">
+                        <a href="/products?brand=Nike"
+                            class="text-decoration-none text-dark opacity-50 grayscale-hover-color d-block">
+                            <i class="fab fa-nike fa-3x mb-2"></i>
+                            <h6 class="fw-bold text-uppercase">Nike</h6>
+                        </a>
+                    </div>
+                    <!-- ADIDAS -->
+                    <div class="col text-center">
+                        <a href="/products?brand=Adidas"
+                            class="text-decoration-none text-dark opacity-50 grayscale-hover-color d-block">
+                            <i class="fab fa-adidas fa-3x mb-2"></i>
+                            <h6 class="fw-bold text-uppercase">Adidas</h6>
+                        </a>
+                    </div>
+                    <!-- PUMA -->
+                    <div class="col text-center">
+                        <a href="/products?brand=Puma"
+                            class="text-decoration-none text-dark opacity-50 grayscale-hover-color d-block">
+                            <i class="fab fa-dyalog fa-3x mb-2"></i>
+                            <!-- Using generic icon as placeholder if fa-puma unavailable or use text -->
+                            <h6 class="fw-bold text-uppercase">Puma</h6>
+                        </a>
+                    </div>
+                    <!-- MIZUNO -->
+                    <div class="col text-center">
+                        <a href="/products?brand=Mizuno"
+                            class="text-decoration-none text-dark opacity-50 grayscale-hover-color d-block">
+                            <i class="fas fa-running fa-3x mb-2"></i>
+                            <h6 class="fw-bold text-uppercase">Mizuno</h6>
+                        </a>
+                    </div>
+                    <!-- RIKKI -->
+                    <div class="col text-center">
+                        <a href="/products?brand=Rikki"
+                            class="text-decoration-none text-dark opacity-50 grayscale-hover-color d-block">
+                            <i class="fas fa-bolt fa-3x mb-2"></i>
+                            <h6 class="fw-bold text-uppercase">Rikki</h6>
+                        </a>
+                    </div>
+                    <!-- ZOCKER -->
+                    <div class="col text-center">
+                        <a href="/products?brand=Zocker"
+                            class="text-decoration-none text-dark opacity-50 grayscale-hover-color d-block">
+                            <i class="fas fa-futbol fa-3x mb-2"></i>
+                            <h6 class="fw-bold text-uppercase">Zocker</h6>
+                        </a>
+                    </div>
+                    <!-- CPBA -->
+                    <div class="col text-center">
+                        <a href="/products?brand=CPBA"
+                            class="text-decoration-none text-dark opacity-50 grayscale-hover-color d-block">
+                            <i class="fas fa-dot-circle fa-3x mb-2"></i>
+                            <h6 class="fw-bold text-uppercase">CPBA</h6>
+                        </a>
+                    </div>
+                    <!-- JOGARBOLA -->
+                    <div class="col text-center">
+                        <a href="/products?brand=Jogarbola"
+                            class="text-decoration-none text-dark opacity-50 grayscale-hover-color d-block">
+                            <i class="fas fa-star fa-3x mb-2"></i>
+                            <h6 class="fw-bold text-uppercase">Jogarbola</h6>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <%- include('../partials/footer') %>
+
+                <style>
+                    .ls-2 {
+                        letter-spacing: 2px;
+                    }
+
+                    .grayscale-hover-color {
+                        filter: grayscale(100%);
+                        transition: all 0.3s;
+                    }
+
+                    .grayscale-hover-color:hover {
+                        filter: grayscale(0%);
+                        opacity: 1 !important;
+                    }
+
+                    .hover-scale {
+                        transition: transform 0.2s;
+                    }
+
+                    .hover-scale:hover {
+                        transform: scale(1.1);
+                    }
+
+                    .product-card .product-actions {
+                        opacity: 0;
+                        transform: translateY(10px);
+                        transition: all 0.3s;
+                    }
+
+                    .product-card:hover .product-actions {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+
+                    .product-card:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
+                    }
+
+                    .transition-all {
+                        transition: all 0.3s ease;
+                    }
+
+                    .hover-primary:hover {
+                        color: #0d6efd !important;
+                    }
+                </style>
+
+                <!-- Add Cart Script (Re-use existing ajax or ensure global script handles it) -->
+                <script>
+                    document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const productId = btn.dataset.id;
+                            try {
+                                const res = await fetch('/cart/add', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ productId, quantity: 1 })
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                    // Update cart badge (assuming id 'cart-count' exists in header)
+                                    const badge = document.getElementById('cart-count');
+                                    if (badge) badge.innerText = data.totalQty;
+
+                                    // Optional: Show toast/alert
+                                    // alert('Đã thêm vào giỏ hàng'); 
+                                } else {
+                                    alert(data.message || 'Lỗi thêm vào giỏ');
+                                }
+                            } catch (err) {
+                                console.error(err);
+                                alert('Có lỗi xảy ra');
+                            }
+                        });
+                    });
+                </script>
